@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "hirex_backend": {
+      "main": "src/hirex_backend/main.mo",
+      "type": "motoko"
+    },
+    "hirex_frontend": {
+      "dependencies": [
+        "hirex_backend"
+      ],
+      "source": [
+        "src/hirex_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "hirex_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
