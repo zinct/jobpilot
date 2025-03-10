@@ -11,14 +11,24 @@ import {
 import { Button } from "./core/components/ui/button";
 import { useEffect } from "react";
 import { hirex_backend } from "declarations/hirex_backend";
+import { getInternetIdentityNetwork } from "@/core/utils/canisterUtils";
+import { AuthClient } from "@dfinity/auth-client";
 
 function App() {
-  async function handleSubmit() {
-    console.log(hirex_backend);
-    const principal = await hirex_backend.whoami();
-    console.log("principal", principal);
-  }
   
+  async function handleLogin() {
+    const authClient = await AuthClient.create();
+    authClient.login({
+      identityProvider: getInternetIdentityNetwork(),
+      // 7 days in nanoseconds
+      maxTimeToLive: BigInt(7 * 24 * 60 * 60 * 1000 * 1000 * 1000),
+      onSuccess: async () => {
+        const identity = await authClient.getIdentity();
+        console.log(identity);
+      },
+    });
+  }
+
   return (
     <>
       <div className="min-h-screen bg-black text-white">
@@ -59,7 +69,7 @@ function App() {
             </nav>
 
             {/* Auth Buttons */}
-            <div className="flex items-center" onClick={handleSubmit}>
+            <div className="flex items-center" onClick={handleLogin}>
               <Button
                 variant="outline"
                 className="hover:border-cyan-400 hover:text-cyan-400 bg-cyan-400/10 text-cyan-300"
