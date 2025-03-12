@@ -30,19 +30,6 @@ export function CVEditor({
 
   return (
     <>
-      {/* AI Tools Section */}
-      <AITools
-        isGenerating={isGenerating}
-        onGenerate={handleGenerateWithAI}
-        isOptimizing={isOptimizing}
-        onOptimize={handleOptimizeForJob}
-        jobTitle={jobTitle}
-        setJobTitle={setJobTitle}
-        company={company}
-        setCompany={setCompany}
-      />
-
-      {/* Template Settings */}
       <TemplateSettings />
 
       {/* CV Sections */}

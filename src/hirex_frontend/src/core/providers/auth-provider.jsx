@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { AuthClient } from "@dfinity/auth-client";
 import { Actor, HttpAgent } from "@dfinity/agent";
-import { hirex_backend } from "declarations/hirex_backend";
+// import { hirex_backend } from "declarations/hirex_backend";
 import { getInternetIdentityNetwork } from "@/core/utils/canisterUtils";
 import { useNavigate } from "react-router";
+import { hirex_backend } from "../utils/agentUtils";
 
 const AuthContext = createContext();
 
@@ -64,6 +65,7 @@ export const AuthProvider = ({ children }) => {
     setIdentity(null);
     setUser(null);
     setIsAuthenticated(false);
+    navigate("/get-started");
   };
 
   return (

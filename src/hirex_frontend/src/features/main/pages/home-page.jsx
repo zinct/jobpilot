@@ -9,15 +9,12 @@ import {
   Wallet,
 } from "lucide-react";
 import { Button } from "@/core/components/ui/button";
-import { useEffect } from "react";
-import { hirex_backend } from "declarations/hirex_backend";
-import { AuthClient } from "@dfinity/auth-client";
 
 import React from "react";
-import { useAuth } from "@/core/providers/auth-provider";
+import { useNavigate } from "react-router";
 
 const HomePage = (props) => {
-  const { isAuthenticated, login, logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -59,7 +56,12 @@ const HomePage = (props) => {
             </nav>
 
             {/* Auth Buttons */}
-            <div className="flex items-center" onClick={login}>
+            <div
+              className="flex items-center"
+              onClick={() => {
+                navigate("/get-started");
+              }}
+            >
               <Button
                 variant="outline"
                 className="hover:border-cyan-400 hover:text-cyan-400 bg-cyan-400/10 text-cyan-300"

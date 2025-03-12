@@ -4,33 +4,26 @@ import { fileURLToPath, URL } from "url";
 import EnvironmentPlugin from "vite-plugin-environment";
 import dotenv from "dotenv";
 
-dotenv.config({ path: "../../.env" });
+dotenv.config({ path: "../../.env.local" });
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    EnvironmentPlugin([
-      "DFX_VERSION",
-      "DFX_NETWORK",
-      "CANISTER_ID_HIREX_FRONTEND",
-      "CANISTER_ID_HIREX_BACKEND",
-      "CANISTER_ID_INTERNET_IDENTITY",
-      "CANISTER_ID",
-      "CANISTER_CANDID_PATH",
-    ]),
+    EnvironmentPlugin("all", { prefix: "CANISTER_" }),
+    EnvironmentPlugin("all", { prefix: "DFX_" }),
   ],
   optimizeDeps: {
     esbuildOptions: {
       define: {
-        global: 'globalThis',
+        global: "globalThis",
       },
     },
   },
   server: {
     proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:4943',
+      "/api": {
+        target: "http://127.0.0.1:4943",
         changeOrigin: true,
       },
     },

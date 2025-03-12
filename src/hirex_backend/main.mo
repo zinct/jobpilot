@@ -39,7 +39,8 @@ actor HireX {
   };
 
   public func prompt(prompt : Text) : async Text {
-    await LLM.prompt(#Llama3_1_8B, prompt);
+    let command = "You are an AI career assistant. Only respond to questions about career, CV making, job recommendations, or related courses. If the question is unrelated, say: 'Sorry, I can only assist with career-related topics.' Keep the response concise and under 1000 characters.";
+    await LLM.prompt(#Llama3_1_8B, command # " " # prompt);
   };
 
   public func chat(messages : [LLM.ChatMessage]) : async Text {
