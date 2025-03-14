@@ -26,12 +26,14 @@ import {
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { useAuth } from "../../providers/auth-provider";
 import { LoadingOverlay } from "../loading-overlay";
+import { hirex_backend } from "../../../../../declarations/hirex_backend";
+import { Actor } from "@dfinity/agent";
 
 export default function DashboardLayout() {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { isLoading, isAuthenticated, logout } = useAuth();
+  const { isLoading, logout, identity } = useAuth();
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -47,8 +49,21 @@ export default function DashboardLayout() {
   }
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) navigate("/get-started");
-  }, [isAuthenticated, isLoading, navigate]);
+    if (!identity) return;
+
+    async function fetchUser() {
+      Actor.agentOf(hirex_backend).replaceIdentity(identity);
+      const response = await hirex_backend.login();
+      if ("ok" in response) {
+        // const user = mapOptionalToFormattedJSON(response.ok);
+        // console.log(user);
+      } else {
+        console.log("err", response.err);
+      }
+    }
+
+    fetchUser();
+  }, [identity]);
 
   const menuItems = [
     {

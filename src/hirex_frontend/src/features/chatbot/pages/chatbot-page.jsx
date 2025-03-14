@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, BrainCircuit, User, ChevronRight } from "lucide-react";
 import { Button } from "@/core/components/ui/button";
-import { hirex_backend } from "../../../core/utils/agentUtils";
+import { hirex_backend } from "declarations/hirex_backend";
 
 export default function CareerChatbot() {
   const [isLoading, setIsLoading] = useState(false);

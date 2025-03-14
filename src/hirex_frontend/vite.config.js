@@ -4,7 +4,7 @@ import { fileURLToPath, URL } from "url";
 import EnvironmentPlugin from "vite-plugin-environment";
 import dotenv from "dotenv";
 
-dotenv.config({ path: "../../.env.local" });
+dotenv.config({ path: "../../.env" });
 
 // https://vite.dev/config/
 export default defineConfig({

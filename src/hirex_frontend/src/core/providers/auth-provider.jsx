@@ -1,24 +1,25 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { AuthClient } from "@dfinity/auth-client";
-import { Actor, HttpAgent } from "@dfinity/agent";
-// import { hirex_backend } from "declarations/hirex_backend";
-import { getInternetIdentityNetwork } from "@/core/utils/canisterUtils";
+import { Actor } from "@dfinity/agent";
 import { useNavigate } from "react-router";
-import { hirex_backend } from "../utils/agentUtils";
+import { getInternetIdentityNetwork } from "@/core/utils/canisterUtils";
+import { hirex_backend } from "../../../../declarations/hirex_backend";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [authClient, setAuthClient] = useState(null);
+  const [user, setUser] = useState(null);
   const [identity, setIdentity] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const initAuth = async () => {
-      const client = await AuthClient.create();
+      const client = await AuthClient.create({
+        identityProvider: getInternetIdentityNetwork(),
+      });
       setAuthClient(client);
       await updateIdentity(client);
     };
@@ -32,17 +33,21 @@ export const AuthProvider = ({ children }) => {
     if (authenticated) {
       const newIdentity = client.getIdentity();
       setIdentity(newIdentity);
-
-      // Check user from smartcontract
-      const principal = newIdentity.getPrincipal();
-      const user = await hirex_backend.login(principal);
-      setUser(user);
+      Actor.agentOf(hirex_backend).replaceIdentity(newIdentity);
+      const userResponse = await hirex_backend.login();
       setIsLoading(false);
 
-      if (user.ok.is_registered === 0) {
-        // navigate("/register");
+      if ("ok" in userResponse) {
+        setUser(userResponse.ok);
+
+        if (userResponse.ok.is_registered[0] === 0) {
+          navigate("/register");
+        }
+      } else if ("err" in userResponse) {
+        console.log("Error:", userResponse.err);
       }
     } else {
+      navigate("/get-started");
       setIsLoading(false);
     }
   };
@@ -60,17 +65,23 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    if (!authClient) return;
     await authClient.logout();
-    setIdentity(null);
     setUser(null);
     setIsAuthenticated(false);
+    window.localStorage.removeItem("identity");
     navigate("/get-started");
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, identity, login, logout, isLoading }}
+      value={{
+        isAuthenticated,
+        login,
+        identity,
+        logout,
+        isLoading,
+        user,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -136,7 +136,7 @@ export function SkillsSection() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="mt-2 border-white/10 hover:bg-white/10"
+                  className="mt-2 bg-gradient-to-r from-cyan-400 to-violet-500 hover:from-cyan-500 hover:to-violet-600 text-white"
                   onClick={addLanguage}
                 >
                   <Plus className="mr-2 h-4 w-4" />

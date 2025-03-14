@@ -31,9 +31,6 @@ export default function LoginPage() {
         message={"Please wait, your application is being processed..."}
       />
       <div className="min-h-screen bg-black text-white">
-        {/* Loading Overlay */}
-        <LoadingOverlay isLoading={false} />
-
         {/* Navigation */}
         <header className="fixed top-0 z-50 w-full border-b border-white/10 bg-black/50 backdrop-blur-xl">
           <div className="container flex h-16 items-center justify-between px-4">

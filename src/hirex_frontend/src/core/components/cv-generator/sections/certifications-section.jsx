@@ -98,7 +98,8 @@ export function CertificationsSection() {
                       onChange={(e) =>
                         updateCertification(cert.id, "date", e.target.value)
                       }
-                      className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+                      className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+                      style={{ colorScheme: "dark" }}
                     />
                   </div>
 
@@ -121,7 +122,7 @@ export function CertificationsSection() {
 
             <Button
               variant="outline"
-              className="w-full border-dashed border-white/20 hover:bg-white/5"
+              className="w-full bg-gradient-to-r from-cyan-400 to-violet-500 hover:from-cyan-500 hover:to-violet-600 text-white"
               onClick={addCertification}
             >
               <Plus className="mr-2 h-4 w-4" />

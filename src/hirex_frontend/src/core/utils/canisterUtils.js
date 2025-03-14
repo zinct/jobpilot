@@ -9,9 +9,44 @@ export function getInternetIdentityNetwork() {
 
   if (network === "local") {
     return `http://${canisterId}.localhost:4943`;
-  } else if (network === "ic") {
-    return `https://${canisterId}.ic0.app`;
-  } else {
+  } else if (network === "playground") {
     return `https://${canisterId}.dfinity.network`;
+  } else {
+    return `https://identity.ic0.app`;
   }
+}
+
+export function mapOptionalToFormattedJSON(data) {
+  if (!data || typeof data !== "object") return data;
+
+  return Object.fromEntries(
+    Object.entries(data).map(([key, value]) => {
+      if (Array.isArray(value)) {
+        if (value.length === 0) return [key, null]; // Jika kosong, jadi null
+        if (value.length === 1) return [key, value[0]]; // Jika satu elemen, jadi string
+        return [key, value.flat()]; // Jika nested array, flatten
+      }
+
+      return [key, value];
+    })
+  );
+}
+
+export function unixToDateString(unix) {
+  return new Date(Number(unix) * 1000).toISOString().split("T")[0];
+}
+
+export function toUnixTimestamps(dateString) {
+  return dateString === null
+    ? null
+    : Math.floor(new Date(dateString).getTime() / 1000);
+}
+
+export function prepareArg(value) {
+  return value === null ||
+    value === "" ||
+    (Array.isArray(value) && value.length === 0) ||
+    Number.isNaN(value)
+    ? []
+    : [value];
 }

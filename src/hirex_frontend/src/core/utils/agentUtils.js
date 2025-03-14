@@ -3,25 +3,31 @@ import { idlFactory as backendIDL } from "declarations/hirex_backend";
 import { idlFactory as llmIDL } from "declarations/llm";
 import { idlFactory as iiIDL } from "declarations/internet_identity";
 
-const backendAgent = new HttpAgent({ host: "https://icp0.io" }); // Playground
-const localAgent = new HttpAgent({ host: "http://127.0.0.1:4943" }); // Lokal
-console.log(
-  "process.env.CANISTER_ID_HIREX_BACKEND",
-  process.env.CANISTER_ID_HIREX_BACKEND
-);
-const hirex_backend = Actor.createActor(backendIDL, {
-  agent: backendAgent,
-  canisterId: process.env.CANISTER_ID_HIREX_BACKEND,
-});
+const host =
+  process.env.DFX_NETWORK === "local"
+    ? "http://127.0.0.1:4943"
+    : "http://127.0.0.1:4943";
 
-const llm = Actor.createActor(llmIDL, {
-  agent: backendAgent,
-  canisterId: process.env.CANISTER_ID_LLM,
-});
+export function createBackendActor(identity) {
+  const agent = new HttpAgent({ host, identity });
+  return Actor.createActor(backendIDL, {
+    agent,
+    canisterId: process.env.CANISTER_ID_HIREX_BACKEND,
+  });
+}
 
-const internet_identity = Actor.createActor(iiIDL, {
-  agent: localAgent,
-  canisterId: process.env.CANISTER_ID_INTERNET_IDENTITY,
-});
+export function createLLMActor(identity) {
+  const agent = new HttpAgent({ host, identity });
+  return Actor.createActor(llmIDL, {
+    agent,
+    canisterId: process.env.CANISTER_ID_LLM,
+  });
+}
 
-export { hirex_backend, llm, internet_identity };
+export function createIIActor(identity) {
+  const agent = new HttpAgent({ host, identity });
+  return Actor.createActor(iiIDL, {
+    agent,
+    canisterId: process.env.CANISTER_ID_INTERNET_IDENTITY,
+  });
+}
