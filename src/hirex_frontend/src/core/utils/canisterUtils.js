@@ -43,10 +43,22 @@ export function toUnixTimestamps(dateString) {
 }
 
 export function prepareArg(value) {
-  return value === null ||
+  if (
+    value === null ||
     value === "" ||
     (Array.isArray(value) && value.length === 0) ||
-    Number.isNaN(value)
-    ? []
-    : [value];
+    Number.isNaN(value) ||
+    (typeof value === "object" && Object.keys(value).length === 0)
+  ) {
+    return [];
+  }
+
+  if (typeof value === "object" && !Array.isArray(value)) {
+    const transformedObject = Object.fromEntries(
+      Object.entries(value).map(([key, val]) => [key, prepareArg(val)])
+    );
+    return [transformedObject];
+  }
+
+  return [value];
 }

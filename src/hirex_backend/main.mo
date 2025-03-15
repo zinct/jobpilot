@@ -3,6 +3,9 @@ import Text "mo:base/Text";
 import Principal "mo:base/Principal";
 import Iter "mo:base/Iter";
 import Result "mo:base/Result";
+import Option "mo:base/Option";
+import Array "mo:base/Array";
+import List "mo:base/List";
 import LLM "mo:llm";
 
 actor HireX {
@@ -23,30 +26,183 @@ actor HireX {
     is_registered : ?Nat8;
   };
 
+  // Resume
+  type PersonalInfo = {
+    name : ?Text;
+    title : ?Text;
+    email : ?Text;
+    phone : ?Text;
+    location : ?Text;
+    website : ?Text;
+    summary : ?Text;
+  };
+
+  type Experience = {
+    id : ?Text;
+    company : ?Text;
+    position : ?Text;
+    location : ?Text;
+    startDate : ?Text;
+    endDate : ?Text;
+    current : ?Bool;
+    description : ?Text;
+    achievements : ?[Text];
+  };
+
+  type Education = {
+    id : ?Text;
+    institution : ?Text;
+    degree : ?Text;
+    location : ?Text;
+    startDate : ?Text;
+    endDate : ?Text;
+    description : ?Text;
+  };
+
+  type Language = {
+    language : ?Text;
+    proficiency : ?Text;
+  };
+
+  type Project = {
+    id : ?Text;
+    title : ?Text;
+    description : ?Text;
+    technologies : ?[Text];
+    link : ?Text;
+  };
+
+  type Certification = {
+    id : ?Text;
+    name : ?Text;
+    issuer : ?Text;
+    date : ?Text;
+    link : ?Text;
+  };
+
+  type Resume = {
+    personalInfo : ?PersonalInfo;
+    experience : ?[Experience];
+    education : ?[Education];
+    skills : ?[Text];
+    languages : ?[Language];
+    projects : ?[Project];
+    certifications : ?[Certification];
+  };
+
   type Response<T> = Result.Result<T, Text>;
 
   stable var users_storage : [(Text, User)] = [];
+  stable var resume_storage : [(Text, [Resume])] = [];
 
-  var users = Map.HashMap<Text, User>(0, Text.equal, Text.hash);
+  var userStore = Map.HashMap<Text, User>(0, Text.equal, Text.hash);
+  var resumesStore = Map.HashMap<Text, [Resume]>(0, Text.equal, Text.hash);
 
-  system func preupgrade() {
-    users_storage := Iter.toArray(users.entries());
+  // RESUME
+  type CreateResumeParams = {
+    index : Nat;
+    personalInfo : ?PersonalInfo;
+    experience : ?[Experience];
+    education : ?[Education];
+    skills : ?[Text];
+    languages : ?[Language];
+    projects : ?[Project];
+    certifications : ?[Certification];
   };
 
-  system func postupgrade() {
-    users := Map.HashMap<Text, User>(users_storage.size(), Text.equal, Text.hash);
-    for ((key, value) in users_storage.vals()) {
-      users.put(key, value);
-    };
-  };
-
-  public shared (msg) func login() : async Response<User> {
-    if (Principal.isAnonymous(msg.caller)) {
-      return #err("Anonymous users are not allowed.");
-    };
+  public shared (msg) func resumes() : async Response<[Resume]> {
+    // if (Principal.isAnonymous(msg.caller)) {
+    //   return #err("Anonymous users are not allowed.");
+    // };
 
     let principal_id = Principal.toText(msg.caller);
-    switch (users.get(principal_id)) {
+    switch (resumesStore.get(principal_id)) {
+      case (?existingResumes) { return #ok(existingResumes) };
+      case null { return #err("No resumes found.") };
+    };
+  };
+
+  public shared (msg) func createResume() : async Response<Nat> {
+    // if (Principal.isAnonymous(msg.caller)) {
+    //   return #err("Anonymous users are not allowed.");
+    // };
+
+    let principal_id = Principal.toText(msg.caller);
+    let new_resume : Resume = {
+      personalInfo = null;
+      experience = null;
+      education = null;
+      skills = null;
+      languages = null;
+      projects = null;
+      certifications = null;
+    };
+
+    let index : Nat = switch (resumesStore.get(principal_id)) {
+      case (?existingResumes) {
+        let updatedResumes = List.toArray(List.push(new_resume, List.fromArray(existingResumes)));
+        resumesStore.put(principal_id, updatedResumes);
+        Array.size(existingResumes);
+      };
+      case null {
+        resumesStore.put(principal_id, [new_resume]);
+        0;
+      };
+    };
+
+    return #ok(index);
+  };
+
+  public shared (msg) func updateResume(params : CreateResumeParams) : async Response<Text> {
+    // if (Principal.isAnonymous(msg.caller)) {
+    //   return #err("Anonymous users are not allowed.");
+    // };
+
+    let principal_id = Principal.toText(msg.caller);
+
+    switch (resumesStore.get(principal_id)) {
+      case (?existingResumes) {
+        if (params.index >= Array.size(existingResumes)) {
+          return #err("Invalid resume index.");
+        };
+
+        let updatedResumes = Array.tabulate(
+          Array.size(existingResumes),
+          func(i : Nat) : Resume {
+            if (i == params.index) {
+              let existingResume = existingResumes[i];
+              return {
+                personalInfo = if (params.personalInfo != null) params.personalInfo else existingResume.personalInfo;
+                experience = if (params.experience != null) params.experience else existingResume.experience;
+                education = if (params.education != null) params.education else existingResume.education;
+                skills = if (params.skills != null) params.skills else existingResume.skills;
+                languages = if (params.languages != null) params.languages else existingResume.languages;
+                projects = if (params.projects != null) params.projects else existingResume.projects;
+                certifications = if (params.certifications != null) params.certifications else existingResume.certifications;
+              };
+            } else {
+              existingResumes[i];
+            };
+          },
+        );
+
+        resumesStore.put(principal_id, updatedResumes);
+        return #ok("Resume updated successfully.");
+      };
+      case null {
+        return #err("No resumes found for this user.");
+      };
+    };
+  };
+
+  // USER
+  public shared (msg) func login() : async Response<User> {
+    // if (Principal.isAnonymous(msg.caller)) {
+    //   return #err("Anonymous users are not allowed.");
+    // };
+
+    let principal_id = Principal.toText(msg.caller);
+    switch (userStore.get(principal_id)) {
       case (?user) { return #ok(user) };
       case null {
         let new_user : User = {
@@ -65,7 +221,7 @@ actor HireX {
           expected_location = null;
           is_registered = ?0;
         };
-        users.put(principal_id, new_user);
+        userStore.put(principal_id, new_user);
         return #ok(new_user);
       };
     };
@@ -87,9 +243,9 @@ actor HireX {
     expected_location : ?Text,
     is_registered : ?Nat8,
   ) : async Response<Text> {
-    if (Principal.isAnonymous(msg.caller)) {
-      return #err("Anonymous users are not allowed.");
-    };
+    // if (Principal.isAnonymous(msg.caller)) {
+    //   return #err("Anonymous users are not allowed.");
+    // };
 
     let principal_id = Principal.toText(msg.caller);
     let updated_profile : User = {
@@ -108,32 +264,44 @@ actor HireX {
       expected_location = expected_location;
       is_registered = is_registered;
     };
-    users.put(principal_id, updated_profile);
+    userStore.put(principal_id, updated_profile);
     return #ok("User registered successfully.");
   };
 
-  public shared query (msg) func get_user() : async Response<User> {
-    if (Principal.isAnonymous(msg.caller)) {
-      return #err("Anonymous users are not allowed.");
-    };
+  public shared query (msg) func getUser() : async Response<User> {
+    // if (Principal.isAnonymous(msg.caller)) {
+    //   return #err("Anonymous users are not allowed.");
+    // };
 
     let principal_id = Principal.toText(msg.caller);
-    switch (users.get(principal_id)) {
+    switch (userStore.get(principal_id)) {
       case (?user) { return #ok(user) };
       case null { return #err("User not found.") };
     };
   };
 
-  public shared (msg) func delete_user() : async Response<Text> {
-    if (Principal.isAnonymous(msg.caller)) {
-      return #err("Anonymous users are not allowed.");
-    };
+  public shared (msg) func deleteUser() : async Response<Text> {
+    // if (Principal.isAnonymous(msg.caller)) {
+    //   return #err("Anonymous users are not allowed.");
+    // };
 
     let principal_id = Principal.toText(msg.caller);
-    if (users.remove(principal_id) != null) {
+    if (userStore.remove(principal_id) != null) {
       return #ok("User deleted successfully.");
     } else {
       return #err("User not found.");
+    };
+  };
+
+  // Orthogonal persistence
+  system func preupgrade() {
+    users_storage := Iter.toArray(userStore.entries());
+  };
+
+  system func postupgrade() {
+    userStore := Map.HashMap<Text, User>(users_storage.size(), Text.equal, Text.hash);
+    for ((key, value) in users_storage.vals()) {
+      userStore.put(key, value);
     };
   };
 

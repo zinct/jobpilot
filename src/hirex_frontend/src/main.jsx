@@ -40,13 +40,25 @@ createRoot(document.getElementById("root")).render(
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<DashboardPage />} />
             <Route path="career-chatbot" element={<ChatbotPage />} />
-            <Route path="job-recommendations" element={<JobRecommendationsPage />} />
-            <Route path="course-recommendations" element={<CourseRecommendationsPage />} />
+            <Route
+              path="job-recommendations"
+              element={<JobRecommendationsPage />}
+            />
+            <Route
+              path="course-recommendations"
+              element={<CourseRecommendationsPage />}
+            />
             <Route path="cv-generator" element={<CVGeneratorPage />} />
             <Route path="profile" element={<ProfilePage />} />
           </Route>
-          <Route path="/dashboard/cv-generator/create" element={<CVGeneratorCreatepage />} />
-          <Route path="/dashboard/cv-generator/builder" element={<CVGeneratorBuilderPage />} />
+          <Route
+            path="/dashboard/cv-generator/create"
+            element={<CVGeneratorCreatepage />}
+          />
+          <Route
+            path="/dashboard/cv-generator/builder/:id"
+            element={<CVGeneratorBuilderPage />}
+          />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
