@@ -16,6 +16,7 @@ import JobRecommendationsPage from "./features/job/pages/job-recommendations-pag
 import CourseRecommendationsPage from "./features/course/pages/course-recommendations-page";
 import ProfilePage from "./features/profile/pages/profile-page";
 import LoginPage from "./features/auth/pages/login-page";
+import CVGeneratorBuilderPage from "./features/cv/cv-generator-builder-page";
 
 const AppLayout = () => {
   return <Outlet />;
@@ -39,21 +40,13 @@ createRoot(document.getElementById("root")).render(
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<DashboardPage />} />
             <Route path="career-chatbot" element={<ChatbotPage />} />
-            <Route
-              path="job-recommendations"
-              element={<JobRecommendationsPage />}
-            />
-            <Route
-              path="course-recommendations"
-              element={<CourseRecommendationsPage />}
-            />
+            <Route path="job-recommendations" element={<JobRecommendationsPage />} />
+            <Route path="course-recommendations" element={<CourseRecommendationsPage />} />
             <Route path="cv-generator" element={<CVGeneratorPage />} />
             <Route path="profile" element={<ProfilePage />} />
           </Route>
-          <Route
-            path="/dashboard/cv-generator/create"
-            element={<CVGeneratorCreatepage />}
-          />
+          <Route path="/dashboard/cv-generator/create" element={<CVGeneratorCreatepage />} />
+          <Route path="/dashboard/cv-generator/builder" element={<CVGeneratorBuilderPage />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

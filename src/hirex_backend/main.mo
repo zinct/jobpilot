@@ -6,7 +6,6 @@ import Result "mo:base/Result";
 import LLM "mo:llm";
 
 actor HireX {
-
   type User = {
     full_name : ?Text;
     date_of_birth : ?Nat;

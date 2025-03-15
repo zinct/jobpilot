@@ -47,7 +47,6 @@ export const AuthProvider = ({ children }) => {
         console.log("Error:", userResponse.err);
       }
     } else {
-      navigate("/get-started");
       setIsLoading(false);
     }
   };
