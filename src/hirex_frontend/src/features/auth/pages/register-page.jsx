@@ -24,6 +24,7 @@ import { Actor } from "@dfinity/agent";
 import { useAuth } from "../../../core/providers/auth-provider";
 import {
   mapOptionalToFormattedJSON,
+  optValue,
   prepareArg,
   toUnixTimestamps,
   unixToDateString,
@@ -115,19 +116,19 @@ export default function Register() {
 
       setIsLoading(true);
       const response = await hirex_backend.register(
-        prepareArg(formData.name),
-        prepareArg(toUnixTimestamps(formData.dateOfBirth)),
-        prepareArg(formData.yearsOfExperience),
-        prepareArg(formData.educationLevel),
-        prepareArg(formData.personalityTraits),
-        prepareArg(formData.learningStyle),
-        prepareArg(formData.jobRolePreferences),
-        prepareArg(formData.jobSearchStatus),
-        prepareArg(formData.roleLevel),
-        prepareArg(formData.workMode),
-        prepareArg(formData.companySize),
-        prepareArg(formData.industriesOfInterest),
-        prepareArg(formData.expectedLocation),
+        optValue(formData.name),
+        optValue(toUnixTimestamps(formData.dateOfBirth)),
+        optValue(formData.yearsOfExperience),
+        optValue(formData.educationLevel),
+        optValue(formData.personalityTraits),
+        optValue(formData.learningStyle),
+        optValue(formData.jobRolePreferences),
+        optValue(formData.jobSearchStatus),
+        optValue(formData.roleLevel),
+        optValue(formData.workMode),
+        optValue(formData.companySize),
+        optValue(formData.industriesOfInterest),
+        optValue(formData.expectedLocation),
         [0]
       );
       setIsLoading(false);
@@ -149,19 +150,19 @@ export default function Register() {
     try {
       setIsLoading(true);
       const response = await hirex_backend.register(
-        prepareArg(formData.name),
-        prepareArg(toUnixTimestamps(formData.dateOfBirth)),
-        prepareArg(formData.yearsOfExperience),
-        prepareArg(formData.educationLevel),
-        prepareArg(formData.personalityTraits),
-        prepareArg(formData.learningStyle),
-        prepareArg(formData.jobRolePreferences),
-        prepareArg(formData.jobSearchStatus),
-        prepareArg(formData.roleLevel),
-        prepareArg(formData.workMode),
-        prepareArg(formData.companySize),
-        prepareArg(formData.industriesOfInterest),
-        prepareArg(formData.expectedLocation),
+        optValue(formData.name),
+        optValue(toUnixTimestamps(formData.dateOfBirth)),
+        optValue(formData.yearsOfExperience),
+        optValue(formData.educationLevel),
+        optValue(formData.personalityTraits),
+        optValue(formData.learningStyle),
+        optValue(formData.jobRolePreferences),
+        optValue(formData.jobSearchStatus),
+        optValue(formData.roleLevel),
+        optValue(formData.workMode),
+        optValue(formData.companySize),
+        optValue(formData.industriesOfInterest),
+        optValue(formData.expectedLocation),
         [1]
       );
       setIsLoading(false);

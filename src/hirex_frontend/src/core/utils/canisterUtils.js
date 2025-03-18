@@ -22,13 +22,9 @@ export function mapOptionalToFormattedJSON(data) {
   return Object.fromEntries(
     Object.entries(data).map(([key, value]) => {
       if (Array.isArray(value)) {
-        if (value.length === 0) return [key, null]; // Array kosong -> null
-        if (value.length === 1) return [key, mapOptionalToFormattedJSON(value[0])]; // Array satu elemen -> ambil elemen pertama (bisa object)
-        return [key, value.map((item) => mapOptionalToFormattedJSON(item))]; // Array banyak elemen -> rekurensif
-      }
-
-      if (typeof value === "object" && value !== null) {
-        return [key, mapOptionalToFormattedJSON(value)]; // Rekursi untuk nested object
+        if (value.length === 0) return [key, null]; // Jika kosong, jadi null
+        if (value.length === 1) return [key, value[0]]; // Jika satu elemen, jadi string
+        return [key, value.flat()]; // Jika nested array, flatten
       }
 
       return [key, value];
@@ -44,13 +40,63 @@ export function toUnixTimestamps(dateString) {
   return dateString === null ? null : Math.floor(new Date(dateString).getTime() / 1000);
 }
 
+export function optValue(value) {
+  console.log("value", value);
+  if (typeof value === "string") {
+    return value ? [value] : [];
+  } else if (typeof value === "number") {
+    return value ? [value] : [];
+  } else if (Array.isArray(value)) {
+    const newArray = value.map((item) => {
+      // if (typeof item === "object") return optValue(value);
+      return item;
+    });
+    return value.length > 0 ? [newArray] : [];
+  }
+
+  console.log("UNknow Type", typeof value);
+  return value;
+}
+
+export function extractOptValue(value) {
+  const newValue = value[0];
+
+  if (Array.isArray(newValue)) {
+    const newArray = value.map((item) => {
+      if (typeof item === "object") return extractOptValue(value);
+      return item;
+    });
+    return value.length > 0 ? newArray : [];
+  }
+
+  if (typeof newValue === "object") {
+    return Object.fromEntries(
+      Object.entries(newValue).map(([key, value]) => {
+        if (Array.isArray(value)) {
+          if (value.length === 0) return [key, null]; // Array kosong -> null
+          if (value.length === 1) return [key, mapOptionalToFormattedJSON(value[0])]; // Array satu elemen -> ambil elemen pertama (bisa object)
+          return [key, value.map((item) => mapOptionalToFormattedJSON(item))]; // Array banyak elemen -> rekurensif
+        }
+
+        if (typeof value === "object" && value !== null) {
+          return [key, mapOptionalToFormattedJSON(value)]; // Rekursi untuk nested object
+        }
+
+        return [key, value];
+      })
+    );
+  }
+
+  return newValue;
+}
+
 export function prepareArg(value) {
   if (value === null || value === "" || (Array.isArray(value) && value.length === 0) || Number.isNaN(value) || (typeof value === "object" && Object.keys(value).length === 0)) {
     return [];
   }
 
   if (Array.isArray(value)) {
-    return value.map((item) => (typeof item === "object" ? prepareArg(item) : [item]));
+    return value.map((item) => (typeof item === "object" ? prepareArg(item) : item));
   }
 
   if (typeof value === "object") {

@@ -9,7 +9,7 @@ import { useNavigate, useParams } from "react-router";
 import { useAuth } from "../../core/providers/auth-provider";
 import { hirex_backend } from "../../../../declarations/hirex_backend";
 import { Actor } from "@dfinity/agent";
-import { mapOptionalToFormattedJSON, prepareArg } from "../../core/utils/canisterUtils";
+import { extractOptValue, mapOptionalToFormattedJSON, optValue, prepareArg } from "../../core/utils/canisterUtils";
 
 // Common skills for suggestions
 const commonSkills = ["JavaScript", "TypeScript", "React", "Next.js", "Node.js", "HTML", "CSS", "Tailwind CSS", "Python", "Java", "C#", "SQL", "MongoDB", "GraphQL", "Git", "Docker", "AWS", "Azure", "Firebase", "Redux", "Vue.js", "Angular", "Express", "Django", "Flask", "PHP", "Laravel", "Ruby", "Ruby on Rails", "Swift", "Kotlin", "Flutter", "React Native", "UI/UX Design", "Figma", "Adobe XD", "Photoshop", "Illustrator", "Project Management", "Agile", "Scrum", "Communication", "Leadership", "Problem Solving", "Teamwork"];
@@ -410,34 +410,31 @@ export default function CVGeneratorBuilderPage() {
     if (currentStep < totalSteps - 1) {
       if (!isStepValid()) return;
 
-      console.log(
-        "params",
-        JSON.stringify({
-          index: Number(id),
-          projects: prepareArg(formData.projects),
-          certifications: prepareArg(formData.education),
-          education: prepareArg(formData.education),
-          experience: prepareArg(formData.experience),
-          languages: [],
-          personalInfo: prepareArg(formData.personalInfo),
-          skills: prepareArg(formData.skills),
-        })
-      );
-
-      Actor.agentOf(hirex_backend).replaceIdentity(identity);
-      const response = await hirex_backend.updateResume({
-        index: Number(id),
-        projects: prepareArg(formData.projects),
-        certifications: prepareArg(formData.education),
-        education: prepareArg(formData.education),
-        experience: prepareArg(formData.experience),
-        languages: [],
-        personalInfo: prepareArg(formData.personalInfo),
-        skills: prepareArg(formData.skills),
+      formData.experience.map((row) => {
+        console.log(
+          Object.keys(row).map((r) => {
+            console.log(row);
+            return {
+              [row]: row[r],
+            };
+          })
+        );
+        console.log(row);
       });
-      setIsLoading(false);
 
-      setCurrentStep(currentStep + 1);
+      // console.log("params", {
+      //   index: Number(id),
+      //   projects: optValue(formData.projects),
+      //   experience: optValue(formData.experience),
+      //   personalInfo: [],
+      //   certifications: [],
+      //   education: [],
+      //   languages: [],
+      //   skills: [],
+      // });
+      // setCurrentStep(currentStep + 1);
+
+      return;
     } else {
       // Final step - submit and redirect
       handleSubmit();
@@ -516,14 +513,17 @@ export default function CVGeneratorBuilderPage() {
       setIsLoading(false);
 
       if ("ok" in response) {
-        const previousFormData = mapOptionalToFormattedJSON(response.ok);
+        // const previousFormData = mapOptionalToFormattedJSON(response.ok);
+        console.log("formData Target", formData);
+        console.log("Response", extractOptValue(response.ok.personalInfo));
         setFormData({
-          personalInfo: previousFormData?.personalInfo ?? formData.personalInfo,
-          experience: previousFormData?.experience ?? formData.experience,
-          education: previousFormData?.education ?? formData.education,
-          certifications: previousFormData?.certifications ?? formData.certifications,
-          projects: previousFormData?.projects ?? formData.projects,
-          skills: previousFormData?.skills ?? formData.skills,
+          ...formData,
+          personalInfo: extractOptValue(response.ok.personalInfo),
+          // experience: previousFormData?.experience ?? formData.experience,
+          // education: previousFormData?.education ?? formData.education,
+          // certifications: previousFormData?.certifications ?? formData.certifications,
+          // projects: previousFormData?.projects ?? formData.projects,
+          // skills: previousFormData?.skills ?? formData.skills,
         });
       } else {
         console.log("err", response.err);
