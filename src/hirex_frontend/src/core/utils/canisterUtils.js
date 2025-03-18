@@ -41,53 +41,43 @@ export function toUnixTimestamps(dateString) {
 }
 
 export function optValue(value) {
-  console.log("value", value);
   if (typeof value === "string") {
     return value ? [value] : [];
   } else if (typeof value === "number") {
     return value ? [value] : [];
   } else if (Array.isArray(value)) {
-    const newArray = value.map((item) => {
-      // if (typeof item === "object") return optValue(value);
-      return item;
-    });
-    return value.length > 0 ? [newArray] : [];
+    return [value.map((item) => optValue(item)[0])];
+  } else if (typeof value === "object") {
+    return [
+      Object.entries(value).reduce((acc, [key, value]) => {
+        acc[key] = [value];
+        return acc;
+      }, {}),
+    ];
   }
 
-  console.log("UNknow Type", typeof value);
   return value;
 }
 
-export function extractOptValue(value) {
-  const newValue = value[0];
+export function extractOptValue(optValue, useZeroIndex = true) {
+  let value = optValue;
 
-  if (Array.isArray(newValue)) {
-    const newArray = value.map((item) => {
-      if (typeof item === "object") return extractOptValue(value);
-      return item;
-    });
-    return value.length > 0 ? newArray : [];
+  if (useZeroIndex) value = optValue[0];
+
+  if (typeof value === "string") {
+    return value[0];
+  } else if (typeof value === "number") {
+    return value[0];
+  } else if (Array.isArray(value)) {
+    return value.map((item) => extractOptValue(item, false));
+  } else if (typeof value === "object") {
+    return Object.entries(value).reduce((acc, [key, value]) => {
+      acc[key] = value[0]; // Ambil nilai pertama dari array
+      return acc;
+    }, {});
   }
 
-  if (typeof newValue === "object") {
-    return Object.fromEntries(
-      Object.entries(newValue).map(([key, value]) => {
-        if (Array.isArray(value)) {
-          if (value.length === 0) return [key, null]; // Array kosong -> null
-          if (value.length === 1) return [key, mapOptionalToFormattedJSON(value[0])]; // Array satu elemen -> ambil elemen pertama (bisa object)
-          return [key, value.map((item) => mapOptionalToFormattedJSON(item))]; // Array banyak elemen -> rekurensif
-        }
-
-        if (typeof value === "object" && value !== null) {
-          return [key, mapOptionalToFormattedJSON(value)]; // Rekursi untuk nested object
-        }
-
-        return [key, value];
-      })
-    );
-  }
-
-  return newValue;
+  return value;
 }
 
 export function prepareArg(value) {

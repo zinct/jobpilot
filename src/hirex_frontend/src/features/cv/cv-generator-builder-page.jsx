@@ -2,20 +2,31 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, Check, User, Briefcase, GraduationCap, Code, Award, FileText, Sparkles, Trash, PlusCircle } from "lucide-react";
+import { Globe, ArrowLeft, ArrowRight, Check, User, Briefcase, GraduationCap, Code, Award, FileText, Sparkles, Trash, PlusCircle } from "lucide-react";
 import { Button } from "@/core/components/ui/button";
 import { LoadingOverlay } from "@/core/components/loading-overlay";
 import { useNavigate, useParams } from "react-router";
 import { useAuth } from "../../core/providers/auth-provider";
 import { hirex_backend } from "../../../../declarations/hirex_backend";
 import { Actor } from "@dfinity/agent";
-import { extractOptValue, mapOptionalToFormattedJSON, optValue, prepareArg } from "../../core/utils/canisterUtils";
+import { extractOptValue, optValue } from "../../core/utils/canisterUtils";
 
 // Common skills for suggestions
 const commonSkills = ["JavaScript", "TypeScript", "React", "Next.js", "Node.js", "HTML", "CSS", "Tailwind CSS", "Python", "Java", "C#", "SQL", "MongoDB", "GraphQL", "Git", "Docker", "AWS", "Azure", "Firebase", "Redux", "Vue.js", "Angular", "Express", "Django", "Flask", "PHP", "Laravel", "Ruby", "Ruby on Rails", "Swift", "Kotlin", "Flutter", "React Native", "UI/UX Design", "Figma", "Adobe XD", "Photoshop", "Illustrator", "Project Management", "Agile", "Scrum", "Communication", "Leadership", "Problem Solving", "Teamwork"];
 
 // Common technologies for projects
 const commonTechnologies = ["React", "Next.js", "TypeScript", "JavaScript", "Node.js", "Express", "MongoDB", "PostgreSQL", "MySQL", "Firebase", "AWS", "Docker", "GraphQL", "REST API", "Redux", "Context API", "Tailwind CSS", "SCSS", "Material UI", "Chakra UI", "Jest", "React Testing Library", "Cypress", "GitHub Actions"];
+
+// Common languages and proficiency levels
+const commonLanguages = ["English", "Spanish", "French", "German", "Chinese", "Japanese", "Russian", "Arabic", "Hindi", "Portuguese", "Italian"];
+
+const proficiencyLevels = [
+  { value: "Native", label: "Native" },
+  { value: "Fluent", label: "Fluent" },
+  { value: "Advanced", label: "Advanced" },
+  { value: "Intermediate", label: "Intermediate" },
+  { value: "Basic", label: "Basic" },
+];
 
 const totalSteps = 6; // Total number of steps in the form
 
@@ -24,10 +35,9 @@ export default function CVGeneratorBuilderPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
-    // Personal Info
     personalInfo: {
       name: "",
       title: "",
@@ -37,53 +47,12 @@ export default function CVGeneratorBuilderPage() {
       website: "",
       summary: "",
     },
-    // Experience
-    experience: [
-      // {
-      //   id: "exp1",
-      //   company: "",
-      //   position: "",
-      //   location: "",
-      //   startDate: "",
-      //   endDate: "",
-      //   current: false,
-      //   description: "",
-      // },
-    ],
-    // Education
-    education: [
-      // {
-      //   id: "edu1",
-      //   institution: "",
-      //   degree: "",
-      //   field: "",
-      //   startDate: "",
-      //   endDate: "",
-      //   description: "",
-      // },
-    ],
-    // Skills
+    experience: [],
+    education: [],
     skills: [],
-    // Projects
-    projects: [
-      // {
-      //   id: "proj1",
-      //   title: "",
-      //   description: "",
-      //   technologies: [],
-      //   link: "",
-      // },
-    ],
-    // Certifications
-    certifications: [
-      // {
-      //   id: "cert1",
-      //   name: "",
-      //   issuer: "",
-      //   date: "",
-      //   link: "",
-      // },
-    ],
+    projects: [],
+    certifications: [],
+    languages: [],
   });
 
   // Calculate progress percentage
@@ -157,6 +126,15 @@ export default function CVGeneratorBuilderPage() {
               startDate: "",
               endDate: "",
               description: "",
+              location: "",
+            },
+          ];
+        case "languages":
+          return [
+            {
+              id: "lang-temp",
+              name: "",
+              proficiency: "",
             },
           ];
         case "projects":
@@ -217,6 +195,14 @@ export default function CVGeneratorBuilderPage() {
           startDate: "",
           endDate: "",
           description: "",
+          location: "",
+        };
+        break;
+      case "languages":
+        newItem = {
+          id: newId,
+          name: "",
+          proficiency: "",
         };
         break;
       case "projects":
@@ -410,29 +396,32 @@ export default function CVGeneratorBuilderPage() {
     if (currentStep < totalSteps - 1) {
       if (!isStepValid()) return;
 
-      formData.experience.map((row) => {
-        console.log(
-          Object.keys(row).map((r) => {
-            console.log(row);
-            return {
-              [row]: row[r],
-            };
-          })
-        );
-        console.log(row);
+      console.log("Current", {
+        index: Number(id),
+        personalInfo: optValue(formData.personalInfo),
+        experience: optValue(formData.experience),
+        projects: optValue(formData.projects),
+        certifications: optValue(formData.certifications),
+        education: optValue(formData.education),
+        languages: optValue(formData.languages),
+        skills: optValue(formData.skills),
       });
 
-      // console.log("params", {
+      // Actor.agentOf(hirex_backend).replaceIdentity(identity);
+      // const response = await hirex_backend.updateResume({
       //   index: Number(id),
-      //   projects: optValue(formData.projects),
+      //   personalInfo: optValue(formData.personalInfo),
       //   experience: optValue(formData.experience),
-      //   personalInfo: [],
-      //   certifications: [],
-      //   education: [],
-      //   languages: [],
-      //   skills: [],
+      //   projects: optValue(formData.projects),
+      //   certifications: optValue(formData.certifications),
+      //   education: optValue(formData.education),
+      //   languages: optValue(formData.languages),
+      //   skills: optValue(formData.skills),
       // });
-      // setCurrentStep(currentStep + 1);
+
+      // console.log(response);
+      setCurrentStep(currentStep + 1);
+      setIsLoading(false);
 
       return;
     } else {
@@ -460,9 +449,11 @@ export default function CVGeneratorBuilderPage() {
         return formData.education.length === 0 || formData.education.every((edu) => edu.institution.trim() !== "" && edu.degree.trim() !== "");
       case 3: // Skills
         return true; // Skills are optional now
-      case 4: // Projects
+      case 4: // Languages
+        return true; // Languages are optional
+      case 5:
         return formData.projects.length === 0 || formData.projects.every((proj) => proj.title.trim() !== "");
-      case 5: // Certifications
+      case 6: // Certifications
         return true; // Optional section
       default:
         return true;
@@ -483,6 +474,10 @@ export default function CVGeneratorBuilderPage() {
 
     if (cleanedData.education.length > 0) {
       cleanedData.education = cleanedData.education.filter((edu) => edu.institution.trim() !== "" || edu.degree.trim() !== "");
+    }
+
+    if (cleanedData.languages.length > 0) {
+      cleanedData.languages = cleanedData.languages.filter((lang) => lang.name.trim() !== "" || lang.proficiency.trim() !== "");
     }
 
     if (cleanedData.projects.length > 0) {
@@ -512,18 +507,17 @@ export default function CVGeneratorBuilderPage() {
       const response = await hirex_backend.resume({ index: Number(id) });
       setIsLoading(false);
 
+      console.log(response);
+
       if ("ok" in response) {
-        // const previousFormData = mapOptionalToFormattedJSON(response.ok);
-        console.log("formData Target", formData);
-        console.log("Response", extractOptValue(response.ok.personalInfo));
         setFormData({
           ...formData,
-          personalInfo: extractOptValue(response.ok.personalInfo),
-          // experience: previousFormData?.experience ?? formData.experience,
-          // education: previousFormData?.education ?? formData.education,
-          // certifications: previousFormData?.certifications ?? formData.certifications,
-          // projects: previousFormData?.projects ?? formData.projects,
-          // skills: previousFormData?.skills ?? formData.skills,
+          personalInfo: extractOptValue(response.ok.personalInfo) ?? formData.personalInfo,
+          experience: extractOptValue(response.ok.experience) ?? [],
+          education: extractOptValue(response.ok.education) ?? [],
+          certifications: extractOptValue(response.ok.certifications) ?? [],
+          projects: extractOptValue(response.ok.projects) ?? [],
+          skills: extractOptValue(response.ok.skills) ?? [],
         });
       } else {
         console.log("err", response.err);
@@ -982,6 +976,26 @@ export default function CVGeneratorBuilderPage() {
                             />
                           </div>
 
+                          {/* Added Location field */}
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-300">Location</label>
+                            <input
+                              id={`edu-location-${edu.id}`}
+                              type="text"
+                              value={edu.location || ""}
+                              onChange={(e) => {
+                                // If this is a temporary item, add it to the real array first
+                                if (edu.id.includes("-temp")) {
+                                  addItem("education");
+                                  return;
+                                }
+                                handleChange("education", "location", e.target.value, edu.id);
+                              }}
+                              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+                              placeholder="New York, NY"
+                            />
+                          </div>
+
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                               <label className="block text-sm font-medium text-gray-300">Start Date</label>
@@ -1152,8 +1166,84 @@ export default function CVGeneratorBuilderPage() {
                   </div>
                 )}
 
-                {/* Step 5: Projects */}
+                {/* Step 5: Languages (NEW) */}
                 {currentStep === 4 && (
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-400/20">
+                        <Globe className="h-4 w-4 text-cyan-400" />
+                      </div>
+                      <h2 className="text-xl font-semibold">Languages</h2>
+                    </div>
+
+                    <p className="text-gray-400">Add languages you speak and your proficiency level. This helps employers understand your communication abilities.</p>
+
+                    {getDisplayItems("languages").map((lang, index) => (
+                      <div key={lang.id} className="space-y-4 p-4 border border-white/10 rounded-lg bg-white/5">
+                        <div className="flex justify-between items-center">
+                          <h3 className="font-medium">Language {index + 1}</h3>
+                          {formData.languages.length > 1 && (
+                            <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-950/20" onClick={() => removeItem("languages", lang.id)}>
+                              Remove
+                            </Button>
+                          )}
+                        </div>
+
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-300">Language</label>
+                            <input
+                              id={`lang-name-${lang.id}`}
+                              type="text"
+                              value={lang.name}
+                              onChange={(e) => {
+                                // If this is a temporary item, add it to the real array first
+                                if (lang.id.includes("-temp")) {
+                                  addItem("languages");
+                                  return;
+                                }
+                                handleChange("languages", "name", e.target.value, lang.id);
+                              }}
+                              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+                              placeholder="English"
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-300">Proficiency Level</label>
+                            <select
+                              id={`lang-proficiency-${lang.id}`}
+                              value={lang.proficiency}
+                              onChange={(e) => {
+                                // If this is a temporary item, add it to the real array first
+                                if (lang.id.includes("-temp")) {
+                                  addItem("languages");
+                                  return;
+                                }
+                                handleChange("languages", "proficiency", e.target.value, lang.id);
+                              }}
+                              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+                            >
+                              <option value="">Select proficiency</option>
+                              <option value="Native">Native</option>
+                              <option value="Fluent">Fluent</option>
+                              <option value="Advanced">Advanced</option>
+                              <option value="Intermediate">Intermediate</option>
+                              <option value="Basic">Basic</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    <Button variant="outline" className="w-full border-none bg-gradient-to-r from-cyan-400 to-violet-500 text-black hover:from-cyan-500 hover:to-violet-600 text-white" onClick={() => addItem("languages")}>
+                      + Add Another Language
+                    </Button>
+                  </div>
+                )}
+
+                {/* Step 6: Projects */}
+                {currentStep === 5 && (
                   <div className="space-y-6">
                     <div className="flex items-center gap-2 mb-4">
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-400/20">
@@ -1295,8 +1385,8 @@ export default function CVGeneratorBuilderPage() {
                   </div>
                 )}
 
-                {/* Step 6: Certifications */}
-                {currentStep === 5 && (
+                {/* Step 7: Certifications */}
+                {currentStep === 6 && (
                   <div className="space-y-6">
                     <div className="flex items-center gap-2 mb-4">
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-400/20">
