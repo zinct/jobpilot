@@ -99,17 +99,6 @@ actor HireX {
   var resumesStore = Map.HashMap<Text, [Resume]>(0, Text.equal, Text.hash);
 
   // RESUME
-  type CreateResumeParams = {
-    index : Nat;
-    personalInfo : ?PersonalInfo;
-    experience : ?[Experience];
-    education : ?[Education];
-    skills : ?[Text];
-    languages : ?[Language];
-    projects : ?[Project];
-    certifications : ?[Certification];
-  };
-
   public shared (msg) func resumes() : async Response<[Resume]> {
     // if (Principal.isAnonymous(msg.caller)) {
     //   return #err("Anonymous users are not allowed.");
@@ -118,6 +107,28 @@ actor HireX {
     let principal_id = Principal.toText(msg.caller);
     switch (resumesStore.get(principal_id)) {
       case (?existingResumes) { return #ok(existingResumes) };
+      case null { return #err("No resumes found.") };
+    };
+  };
+  
+  type ResumeParams = {
+    index : Nat;
+  };
+
+  public shared (msg) func resume(params: ResumeParams) : async Response<Resume> {
+    if (Principal.isAnonymous(msg.caller)) {
+      return #err("Anonymous users are not allowed.");
+    };
+
+    let principal_id = Principal.toText(msg.caller);
+
+    switch (resumesStore.get(principal_id)) {
+      case (?existingResumes) {
+        if (params.index >= Array.size(existingResumes)) {
+          return #err("Invalid index. Resume not found.");
+        };
+        return #ok(existingResumes[params.index]);
+      };
       case null { return #err("No resumes found.") };
     };
   };
@@ -153,7 +164,17 @@ actor HireX {
     return #ok(index);
   };
 
-  public shared (msg) func updateResume(params : CreateResumeParams) : async Response<Text> {
+  type UpdateResumeParams = {
+    index : Nat;
+    personalInfo : ?PersonalInfo;
+    experience : ?[Experience];
+    education : ?[Education];
+    skills : ?[Text];
+    languages : ?[Language];
+    projects : ?[Project];
+    certifications : ?[Certification];
+  };
+  public shared (msg) func updateResume(params : UpdateResumeParams) : async Response<Text> {
     // if (Principal.isAnonymous(msg.caller)) {
     //   return #err("Anonymous users are not allowed.");
     // };
