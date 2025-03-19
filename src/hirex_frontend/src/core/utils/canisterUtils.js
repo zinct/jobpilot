@@ -59,17 +59,19 @@ export function optValue(value) {
   return value;
 }
 
-export function extractOptValue(optValue, useZeroIndex = true) {
+export function extractOptValue(optValue, useZeroIndex = true, isArray = false) {
   let value = optValue;
 
   if (useZeroIndex) value = optValue[0];
 
   if (typeof value === "string") {
+    if (isArray) return value;
     return value[0];
   } else if (typeof value === "number") {
+    if (isArray) return value;
     return value[0];
   } else if (Array.isArray(value)) {
-    return value.map((item) => extractOptValue(item, false));
+    return value.map((item) => extractOptValue(item, false, true));
   } else if (typeof value === "object") {
     return Object.entries(value).reduce((acc, [key, value]) => {
       acc[key] = value[0]; // Ambil nilai pertama dari array

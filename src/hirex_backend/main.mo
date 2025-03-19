@@ -6,6 +6,7 @@ import Result "mo:base/Result";
 import Option "mo:base/Option";
 import Array "mo:base/Array";
 import List "mo:base/List";
+import Nat32 "mo:base/Nat32";
 import LLM "mo:llm";
 
 actor HireX {
@@ -53,6 +54,7 @@ actor HireX {
     id : ?Text;
     institution : ?Text;
     degree : ?Text;
+    field : ?Text;
     location : ?Text;
     startDate : ?Text;
     endDate : ?Text;
@@ -60,6 +62,7 @@ actor HireX {
   };
 
   type Language = {
+    id : ?Text;
     language : ?Text;
     proficiency : ?Text;
   };
@@ -80,7 +83,9 @@ actor HireX {
     link : ?Text;
   };
 
+  type ResumeId = Nat32;
   type Resume = {
+    id : ResumeId;
     personalInfo : ?PersonalInfo;
     experience : ?[Experience];
     education : ?[Education];
@@ -92,11 +97,13 @@ actor HireX {
 
   type Response<T> = Result.Result<T, Text>;
 
-  stable var users_storage : [(Text, User)] = [];
-  stable var resume_storage : [(Text, [Resume])] = [];
+  stable var usersStorage : [(Principal, User)] = [];
 
-  var userStore = Map.HashMap<Text, User>(0, Text.equal, Text.hash);
-  var resumesStore = Map.HashMap<Text, [Resume]>(0, Text.equal, Text.hash);
+  private stable var nextResumeId : ResumeId = 0;
+  stable var resumesStorage : [(Principal, [Resume])] = [];
+
+  var userStore = Map.HashMap<Principal, User>(0, Principal.equal, Principal.hash);
+  var resumesStore = Map.HashMap<Principal, [Resume]>(0, Principal.equal, Principal.hash);
 
   // RESUME
   public shared (msg) func resumes() : async Response<[Resume]> {
@@ -104,42 +111,40 @@ actor HireX {
     //   return #err("Anonymous users are not allowed.");
     // };
 
-    let principal_id = Principal.toText(msg.caller);
-    switch (resumesStore.get(principal_id)) {
+    switch (resumesStore.get(msg.caller)) {
       case (?existingResumes) { return #ok(existingResumes) };
       case null { return #err("No resumes found.") };
     };
   };
   
   type ResumeParams = {
-    index : Nat;
+    resumeId : ResumeId;
   };
-
   public shared (msg) func resume(params: ResumeParams) : async Response<Resume> {
-    if (Principal.isAnonymous(msg.caller)) {
-      return #err("Anonymous users are not allowed.");
-    };
-
-    let principal_id = Principal.toText(msg.caller);
-
-    switch (resumesStore.get(principal_id)) {
-      case (?existingResumes) {
-        if (params.index >= Array.size(existingResumes)) {
-          return #err("Invalid index. Resume not found.");
-        };
-        return #ok(existingResumes[params.index]);
-      };
-      case null { return #err("No resumes found.") };
-    };
-  };
-
-  public shared (msg) func createResume() : async Response<Nat> {
     // if (Principal.isAnonymous(msg.caller)) {
     //   return #err("Anonymous users are not allowed.");
     // };
 
-    let principal_id = Principal.toText(msg.caller);
-    let new_resume : Resume = {
+    switch (resumesStore.get(msg.caller)) {
+      case (?existingResumes) {
+        let foundResume = Array.find<Resume>(existingResumes, func(r) { r.id == params.resumeId });
+
+        switch (foundResume) {
+          case (?resume) { return #ok(resume); };
+          case null { return #err("Resume ID not found."); };
+        };
+      };
+      case null { return #err("No resumes found."); };
+    };
+  };
+
+  public shared (msg) func createResume() : async Response<ResumeId> {
+    // if (Principal.isAnonymous(msg.caller)) {
+    //   return #err("Anonymous users are not allowed.");
+    // };
+
+    let newResume : Resume = {
+      id = nextResumeId;
       personalInfo = null;
       experience = null;
       education = null;
@@ -149,15 +154,17 @@ actor HireX {
       certifications = null;
     };
 
-    let index : Nat = switch (resumesStore.get(principal_id)) {
+    nextResumeId += 1;
+
+    let index : ResumeId = switch (resumesStore.get(msg.caller)) {
       case (?existingResumes) {
-        let updatedResumes = List.toArray(List.push(new_resume, List.fromArray(existingResumes)));
-        resumesStore.put(principal_id, updatedResumes);
-        Array.size(existingResumes);
+        let updatedResumes = List.toArray(List.push(newResume, List.fromArray(existingResumes)));
+        resumesStore.put(msg.caller, updatedResumes);
+        newResume.id;
       };
       case null {
-        resumesStore.put(principal_id, [new_resume]);
-        0;
+        resumesStore.put(msg.caller, [newResume]);
+        newResume.id;
       };
     };
 
@@ -165,7 +172,7 @@ actor HireX {
   };
 
   type UpdateResumeParams = {
-    index : Nat;
+    resumeId : ResumeId;
     personalInfo : ?PersonalInfo;
     experience : ?[Experience];
     education : ?[Education];
@@ -175,46 +182,38 @@ actor HireX {
     certifications : ?[Certification];
   };
   public shared (msg) func updateResume(params : UpdateResumeParams) : async Response<Text> {
-    // if (Principal.isAnonymous(msg.caller)) {
-    //   return #err("Anonymous users are not allowed.");
-    // };
-
-    let principal_id = Principal.toText(msg.caller);
-
-    switch (resumesStore.get(principal_id)) {
+    switch (resumesStore.get(msg.caller)) {
       case (?existingResumes) {
-        if (params.index >= Array.size(existingResumes)) {
-          return #err("Invalid resume index.");
-        };
+        let foundResume = Array.find<Resume>(existingResumes, func(r) { r.id == params.resumeId });
 
-        let updatedResumes = Array.tabulate(
-          Array.size(existingResumes),
-          func(i : Nat) : Resume {
-            if (i == params.index) {
-              let existingResume = existingResumes[i];
-              return {
-                personalInfo = if (params.personalInfo != null) params.personalInfo else existingResume.personalInfo;
-                experience = if (params.experience != null) params.experience else existingResume.experience;
-                education = if (params.education != null) params.education else existingResume.education;
-                skills = if (params.skills != null) params.skills else existingResume.skills;
-                languages = if (params.languages != null) params.languages else existingResume.languages;
-                projects = if (params.projects != null) params.projects else existingResume.projects;
-                certifications = if (params.certifications != null) params.certifications else existingResume.certifications;
-              };
-            } else {
-              existingResumes[i];
+        switch (foundResume) {
+          case (?resume) {
+            let updatedResume: Resume = {
+              id = resume.id;
+              personalInfo = if (params.personalInfo != null) params.personalInfo else resume.personalInfo;
+              experience = if (params.experience != null) params.experience else resume.experience;
+              education = if (params.education != null) params.education else resume.education;
+              skills = if (params.skills != null) params.skills else resume.skills;
+              languages = if (params.languages != null) params.languages else resume.languages;
+              projects = if (params.projects != null) params.projects else resume.projects;
+              certifications = if (params.certifications != null) params.certifications else resume.certifications;
             };
-          },
-        );
 
-        resumesStore.put(principal_id, updatedResumes);
-        return #ok("Resume updated successfully.");
+            let updatedResumes = Array.map<Resume, Resume>(existingResumes, func(r) {
+              if (r.id == params.resumeId) { updatedResume } else { r };
+            });
+
+            resumesStore.put(msg.caller, updatedResumes);
+            return #ok("Resume updated successfully.");
+          };
+          case null { return #err("Resume ID not found."); };
+        };
       };
-      case null {
-        return #err("No resumes found for this user.");
-      };
+      case null { return #err("No resumes found."); };
     };
   };
+
+
 
   // USER
   public shared (msg) func login() : async Response<User> {
@@ -222,8 +221,7 @@ actor HireX {
     //   return #err("Anonymous users are not allowed.");
     // };
 
-    let principal_id = Principal.toText(msg.caller);
-    switch (userStore.get(principal_id)) {
+    switch (userStore.get(msg.caller)) {
       case (?user) { return #ok(user) };
       case null {
         let new_user : User = {
@@ -242,7 +240,7 @@ actor HireX {
           expected_location = null;
           is_registered = ?0;
         };
-        userStore.put(principal_id, new_user);
+        userStore.put(msg.caller, new_user);
         return #ok(new_user);
       };
     };
@@ -268,7 +266,6 @@ actor HireX {
     //   return #err("Anonymous users are not allowed.");
     // };
 
-    let principal_id = Principal.toText(msg.caller);
     let updated_profile : User = {
       full_name = full_name;
       date_of_birth = date_of_birth;
@@ -285,8 +282,20 @@ actor HireX {
       expected_location = expected_location;
       is_registered = is_registered;
     };
-    userStore.put(principal_id, updated_profile);
+    userStore.put(msg.caller, updated_profile);
     return #ok("User registered successfully.");
+  };
+
+  public shared func getAllResumes() : async [Resume] {
+    let allEntries = Iter.toArray(resumesStore.entries()); // Ubah iterator ke array
+    let allResumes = Array.foldLeft<(Principal, [Resume]), [Resume]>(
+        allEntries,
+        [],
+        func(acc, (_, resumes)) {
+            Array.append(acc, resumes);
+        }
+    );
+    return allResumes;
   };
 
   public shared query (msg) func getUser() : async Response<User> {
@@ -294,8 +303,7 @@ actor HireX {
     //   return #err("Anonymous users are not allowed.");
     // };
 
-    let principal_id = Principal.toText(msg.caller);
-    switch (userStore.get(principal_id)) {
+    switch (userStore.get(msg.caller)) {
       case (?user) { return #ok(user) };
       case null { return #err("User not found.") };
     };
@@ -306,8 +314,7 @@ actor HireX {
     //   return #err("Anonymous users are not allowed.");
     // };
 
-    let principal_id = Principal.toText(msg.caller);
-    if (userStore.remove(principal_id) != null) {
+    if (userStore.remove(msg.caller) != null) {
       return #ok("User deleted successfully.");
     } else {
       return #err("User not found.");
@@ -316,13 +323,19 @@ actor HireX {
 
   // Orthogonal persistence
   system func preupgrade() {
-    users_storage := Iter.toArray(userStore.entries());
+    usersStorage := Iter.toArray(userStore.entries());
+    resumesStorage := Iter.toArray(resumesStore.entries());
   };
 
   system func postupgrade() {
-    userStore := Map.HashMap<Text, User>(users_storage.size(), Text.equal, Text.hash);
-    for ((key, value) in users_storage.vals()) {
+    userStore := Map.HashMap<Principal, User>(usersStorage.size(), Principal.equal, Principal.hash);
+    for ((key, value) in usersStorage.vals()) {
       userStore.put(key, value);
+    };
+
+    resumesStore := Map.HashMap<Principal, [Resume]>(resumesStorage.size(), Principal.equal, Principal.hash);
+    for ((key, value) in resumesStorage.vals()) {
+      resumesStore.put(key, value);
     };
   };
 

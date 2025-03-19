@@ -35,7 +35,7 @@ export default function CVGeneratorBuilderPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     personalInfo: {
@@ -133,7 +133,7 @@ export default function CVGeneratorBuilderPage() {
           return [
             {
               id: "lang-temp",
-              name: "",
+              language: "",
               proficiency: "",
             },
           ];
@@ -389,44 +389,32 @@ export default function CVGeneratorBuilderPage() {
     }, 2000); // 2 second delay to simulate AI processing
   };
 
-  // console.log("formData", formData);
-
   // Navigate to next step
   const nextStep = async () => {
-    if (currentStep < totalSteps - 1) {
-      if (!isStepValid()) return;
+    if (!isStepValid()) return;
 
-      console.log("Current", {
-        index: Number(id),
-        personalInfo: optValue(formData.personalInfo),
-        experience: optValue(formData.experience),
-        projects: optValue(formData.projects),
-        certifications: optValue(formData.certifications),
-        education: optValue(formData.education),
-        languages: optValue(formData.languages),
-        skills: optValue(formData.skills),
-      });
+    setIsLoading(true);
+    Actor.agentOf(hirex_backend).replaceIdentity(identity);
+    const response = await hirex_backend.updateResume({
+      resumeId: Number(id),
+      personalInfo: optValue(formData.personalInfo),
+      experience: optValue(formData.experience),
+      projects: optValue(formData.projects),
+      certifications: optValue(formData.certifications),
+      education: optValue(formData.education),
+      languages: optValue(formData.languages),
+      skills: optValue(formData.skills),
+    });
+    setIsLoading(false);
 
-      // Actor.agentOf(hirex_backend).replaceIdentity(identity);
-      // const response = await hirex_backend.updateResume({
-      //   index: Number(id),
-      //   personalInfo: optValue(formData.personalInfo),
-      //   experience: optValue(formData.experience),
-      //   projects: optValue(formData.projects),
-      //   certifications: optValue(formData.certifications),
-      //   education: optValue(formData.education),
-      //   languages: optValue(formData.languages),
-      //   skills: optValue(formData.skills),
-      // });
-
-      // console.log(response);
-      setCurrentStep(currentStep + 1);
-      setIsLoading(false);
-
-      return;
+    if ("ok" in response) {
+      if (currentStep < totalSteps - 1) {
+        setCurrentStep(currentStep + 1);
+      } else {
+        navigate(`/dashboard/cv-generator/create/${id}`);
+      }
     } else {
-      // Final step - submit and redirect
-      handleSubmit();
+      console.log("err", response.err);
     }
   };
 
@@ -460,54 +448,13 @@ export default function CVGeneratorBuilderPage() {
     }
   };
 
-  // Submit form and redirect
-  const handleSubmit = () => {
-    setIsLoading(true);
-
-    // Create a cleaned version of the form data
-    const cleanedData = { ...formData };
-
-    // Only keep items that have required fields filled
-    if (cleanedData.experience.length > 0) {
-      cleanedData.experience = cleanedData.experience.filter((exp) => exp.company.trim() !== "" || exp.position.trim() !== "");
-    }
-
-    if (cleanedData.education.length > 0) {
-      cleanedData.education = cleanedData.education.filter((edu) => edu.institution.trim() !== "" || edu.degree.trim() !== "");
-    }
-
-    if (cleanedData.languages.length > 0) {
-      cleanedData.languages = cleanedData.languages.filter((lang) => lang.name.trim() !== "" || lang.proficiency.trim() !== "");
-    }
-
-    if (cleanedData.projects.length > 0) {
-      cleanedData.projects = cleanedData.projects.filter((proj) => proj.title.trim() !== "");
-    }
-
-    if (cleanedData.certifications.length > 0) {
-      cleanedData.certifications = cleanedData.certifications.filter((cert) => cert.name.trim() !== "");
-    }
-
-    // In a real app, you would save this data to a database or state management
-    // For now, we'll simulate a delay and then redirect
-    setTimeout(() => {
-      // Store data in localStorage for demo purposes
-      localStorage.setItem("cvData", JSON.stringify(cleanedData));
-
-      // Redirect to CV generator create page
-      // router.push("/dashboard/cv-generator/create");
-    }, 1000);
-  };
-
   useEffect(() => {
     if (!identity) return;
 
-    async function fetchUser() {
+    async function fetchResume() {
       Actor.agentOf(hirex_backend).replaceIdentity(identity);
-      const response = await hirex_backend.resume({ index: Number(id) });
+      const response = await hirex_backend.resume({ resumeId: Number(id) });
       setIsLoading(false);
-
-      console.log(response);
 
       if ("ok" in response) {
         setFormData({
@@ -518,13 +465,15 @@ export default function CVGeneratorBuilderPage() {
           certifications: extractOptValue(response.ok.certifications) ?? [],
           projects: extractOptValue(response.ok.projects) ?? [],
           skills: extractOptValue(response.ok.skills) ?? [],
+          languages: extractOptValue(response.ok.languages) ?? [],
         });
       } else {
         console.log("err", response.err);
+        navigate("/dashboard");
       }
     }
 
-    fetchUser();
+    fetchResume();
   }, [identity]);
 
   return (
@@ -996,40 +945,38 @@ export default function CVGeneratorBuilderPage() {
                             />
                           </div>
 
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <label className="block text-sm font-medium text-gray-300">Start Date</label>
-                              <input
-                                type="date"
-                                value={edu.startDate}
-                                onChange={(e) => {
-                                  // If this is a temporary item, add it to the real array first
-                                  if (edu.id.includes("-temp")) {
-                                    addItem("education");
-                                    return;
-                                  }
-                                  handleChange("education", "startDate", e.target.value, edu.id);
-                                }}
-                                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
-                              />
-                            </div>
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-300">Start Date</label>
+                            <input
+                              type="date"
+                              value={edu.startDate}
+                              onChange={(e) => {
+                                // If this is a temporary item, add it to the real array first
+                                if (edu.id.includes("-temp")) {
+                                  addItem("education");
+                                  return;
+                                }
+                                handleChange("education", "startDate", e.target.value, edu.id);
+                              }}
+                              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+                            />
+                          </div>
 
-                            <div className="space-y-2">
-                              <label className="block text-sm font-medium text-gray-300">End Date</label>
-                              <input
-                                type="date"
-                                value={edu.endDate}
-                                onChange={(e) => {
-                                  // If this is a temporary item, add it to the real array first
-                                  if (edu.id.includes("-temp")) {
-                                    addItem("education");
-                                    return;
-                                  }
-                                  handleChange("education", "endDate", e.target.value, edu.id);
-                                }}
-                                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
-                              />
-                            </div>
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-300">End Date</label>
+                            <input
+                              type="date"
+                              value={edu.endDate}
+                              onChange={(e) => {
+                                // If this is a temporary item, add it to the real array first
+                                if (edu.id.includes("-temp")) {
+                                  addItem("education");
+                                  return;
+                                }
+                                handleChange("education", "endDate", e.target.value, edu.id);
+                              }}
+                              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+                            />
                           </div>
                         </div>
 
@@ -1195,14 +1142,14 @@ export default function CVGeneratorBuilderPage() {
                             <input
                               id={`lang-name-${lang.id}`}
                               type="text"
-                              value={lang.name}
+                              value={lang.language}
                               onChange={(e) => {
                                 // If this is a temporary item, add it to the real array first
                                 if (lang.id.includes("-temp")) {
                                   addItem("languages");
                                   return;
                                 }
-                                handleChange("languages", "name", e.target.value, lang.id);
+                                handleChange("languages", "language", e.target.value, lang.id);
                               }}
                               className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
                               placeholder="English"

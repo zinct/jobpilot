@@ -51,7 +51,7 @@ createRoot(document.getElementById("root")).render(
           </Route>
 
           <Route path="/dashboard" element={<ResumeGeneratorLayout />}>
-            <Route path="cv-generator/create" element={<CVGeneratorCreatepage />} />
+            <Route path="cv-generator/create/:id" element={<CVGeneratorCreatepage />} />
             <Route path="cv-generator/builder/:id" element={<CVGeneratorBuilderPage />} />
           </Route>
         </Routes>

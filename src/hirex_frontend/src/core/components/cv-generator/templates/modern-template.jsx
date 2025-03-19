@@ -15,9 +15,7 @@ export function ModernTemplate() {
           <div>{cvData.personalInfo.email}</div>
           <div>{cvData.personalInfo.phone}</div>
           <div>{cvData.personalInfo.location}</div>
-          {cvData.personalInfo.website && (
-            <div>{cvData.personalInfo.website}</div>
-          )}
+          {cvData.personalInfo.website && <div>{cvData.personalInfo.website}</div>}
         </div>
       </header>
 
@@ -26,21 +24,13 @@ export function ModernTemplate() {
         <div className="w-2/3 pr-8">
           {/* Summary */}
           <section className="mb-6">
-            <h3
-              className={`text-lg font-bold mb-2 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}
-            >
-              Professional Summary
-            </h3>
+            <h3 className={`text-lg font-bold mb-2 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}>Professional Summary</h3>
             <p>{cvData.personalInfo.summary}</p>
           </section>
 
           {/* Experience */}
           <section className="mb-6">
-            <h3
-              className={`text-lg font-bold mb-4 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}
-            >
-              Work Experience
-            </h3>
+            <h3 className={`text-lg font-bold mb-4 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}>Work Experience</h3>
 
             <div className="space-y-4">
               {cvData.experience.map((exp) => (
@@ -70,11 +60,7 @@ export function ModernTemplate() {
 
           {/* Education */}
           <section className="mb-6">
-            <h3
-              className={`text-lg font-bold mb-4 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}
-            >
-              Education
-            </h3>
+            <h3 className={`text-lg font-bold mb-4 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}>Education</h3>
 
             <div className="space-y-4">
               {cvData.education.map((edu) => (
@@ -88,9 +74,7 @@ export function ModernTemplate() {
                   <div className="text-sm font-medium">
                     {edu.institution}, {edu.location}
                   </div>
-                  {edu.description && (
-                    <p className="mt-2 text-sm">{edu.description}</p>
-                  )}
+                  {edu.description && <p className="mt-2 text-sm">{edu.description}</p>}
                 </div>
               ))}
             </div>
@@ -99,11 +83,7 @@ export function ModernTemplate() {
           {/* Projects */}
           {cvData.projects.length > 0 && (
             <section className="mb-6">
-              <h3
-                className={`text-lg font-bold mb-4 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}
-              >
-                Projects
-              </h3>
+              <h3 className={`text-lg font-bold mb-4 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}>Projects</h3>
 
               <div className="space-y-4">
                 {cvData.projects.map((project) => (
@@ -114,10 +94,7 @@ export function ModernTemplate() {
                     {project.technologies.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
                         {project.technologies.map((tech, index) => (
-                          <span
-                            key={index}
-                            className={`inline-block rounded-full bg-gradient-to-r ${colorClass} bg-opacity-10 px-2 py-0.5 text-xs`}
-                          >
+                          <span key={index} className={`inline-block rounded-full bg-gradient-to-r ${colorClass} bg-opacity-10 px-2 py-0.5 text-xs`}>
                             {tech}
                           </span>
                         ))}
@@ -126,12 +103,7 @@ export function ModernTemplate() {
 
                     {project.link && (
                       <div className="mt-1 text-sm">
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}
-                        >
+                        <a href={project.link} target="_blank" rel="noopener noreferrer" className={`text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}>
                           View Project
                         </a>
                       </div>
@@ -146,18 +118,11 @@ export function ModernTemplate() {
         <div className="w-1/3">
           {/* Skills */}
           <section className="mb-6">
-            <h3
-              className={`text-lg font-bold mb-4 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}
-            >
-              Skills
-            </h3>
+            <h3 className={`text-lg font-bold mb-4 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}>Skills</h3>
 
             <div className="flex flex-wrap gap-2">
               {cvData.skills.map((skill, index) => (
-                <span
-                  key={index}
-                  className={`inline-block rounded-full bg-gradient-to-r ${colorClass} bg-opacity-10 px-3 py-1 text-sm`}
-                >
+                <span key={index} className={`inline-block rounded-full bg-blue-500 bg-opacity-10 px-3 py-1 text-sm`}>
                   {skill}
                 </span>
               ))}
@@ -167,11 +132,7 @@ export function ModernTemplate() {
           {/* Languages */}
           {cvData.languages.length > 0 && (
             <section className="mb-6">
-              <h3
-                className={`text-lg font-bold mb-4 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}
-              >
-                Languages
-              </h3>
+              <h3 className={`text-lg font-bold mb-4 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}>Languages</h3>
 
               <ul className="space-y-2">
                 {cvData.languages.map((lang, index) => (
@@ -187,11 +148,7 @@ export function ModernTemplate() {
           {/* Certifications */}
           {cvData.certifications.length > 0 && (
             <section className="mb-6">
-              <h3
-                className={`text-lg font-bold mb-4 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}
-              >
-                Certifications
-              </h3>
+              <h3 className={`text-lg font-bold mb-4 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}>Certifications</h3>
 
               <ul className="space-y-3">
                 {cvData.certifications.map((cert) => (
