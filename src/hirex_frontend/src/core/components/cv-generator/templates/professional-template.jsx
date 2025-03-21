@@ -8,22 +8,14 @@ export function ProfessionalTemplate() {
     <div className="flex flex-col h-full">
       {/* Header */}
       <header className="p-8 text-center border-b-4 border-gray-200">
-        <h1
-          className={`text-3xl font-bold text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}
-        >
-          {cvData.personalInfo.name}
-        </h1>
-        <h2 className="text-xl mt-1 text-gray-600">
-          {cvData.personalInfo.title}
-        </h2>
+        <h1 className={`text-3xl font-bold text-black`}>{cvData.personalInfo.name}</h1>
+        <h2 className="text-xl mt-1 text-gray-600">{cvData.personalInfo.title}</h2>
 
         <div className="mt-4 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
           <div>{cvData.personalInfo.email}</div>
           <div>{cvData.personalInfo.phone}</div>
           <div>{cvData.personalInfo.location}</div>
-          {cvData.personalInfo.website && (
-            <div>{cvData.personalInfo.website}</div>
-          )}
+          {cvData.personalInfo.website && <div>{cvData.personalInfo.website}</div>}
         </div>
       </header>
 
@@ -32,29 +24,13 @@ export function ProfessionalTemplate() {
         <div className="w-full">
           {/* Summary */}
           <section className="mb-6">
-            <h3
-              className={`text-lg font-bold mb-2 border-b-2 pb-1 ${
-                colorClass.includes("from-")
-                  ? colorClass.replace("from-", "border-")
-                  : "border-gray-300"
-              }`}
-            >
-              Professional Summary
-            </h3>
+            <h3 className={`text-lg font-bold mb-2 border-b-2 pb-1 ${colorClass.includes("from-") ? colorClass.replace("from-", "border-") : "border-gray-300"}`}>Professional Summary</h3>
             <p>{cvData.personalInfo.summary}</p>
           </section>
 
           {/* Experience */}
           <section className="mb-6">
-            <h3
-              className={`text-lg font-bold mb-4 border-b-2 pb-1 ${
-                colorClass.includes("from-")
-                  ? colorClass.replace("from-", "border-")
-                  : "border-gray-300"
-              }`}
-            >
-              Work Experience
-            </h3>
+            <h3 className={`text-lg font-bold mb-4 border-b-2 pb-1 ${colorClass.includes("from-") ? colorClass.replace("from-", "border-") : "border-gray-300"}`}>Work Experience</h3>
 
             <div className="space-y-4">
               {cvData.experience.map((exp) => (
@@ -84,15 +60,7 @@ export function ProfessionalTemplate() {
 
           {/* Education */}
           <section className="mb-6">
-            <h3
-              className={`text-lg font-bold mb-4 border-b-2 pb-1 ${
-                colorClass.includes("from-")
-                  ? colorClass.replace("from-", "border-")
-                  : "border-gray-300"
-              }`}
-            >
-              Education
-            </h3>
+            <h3 className={`text-lg font-bold mb-4 border-b-2 pb-1 ${colorClass.includes("from-") ? colorClass.replace("from-", "border-") : "border-gray-300"}`}>Education</h3>
 
             <div className="space-y-4">
               {cvData.education.map((edu) => (
@@ -106,9 +74,7 @@ export function ProfessionalTemplate() {
                   <div className="text-sm font-medium">
                     {edu.institution}, {edu.location}
                   </div>
-                  {edu.description && (
-                    <p className="mt-2 text-sm">{edu.description}</p>
-                  )}
+                  {edu.description && <p className="mt-2 text-sm">{edu.description}</p>}
                 </div>
               ))}
             </div>
@@ -116,22 +82,11 @@ export function ProfessionalTemplate() {
 
           {/* Skills */}
           <section className="mb-6">
-            <h3
-              className={`text-lg font-bold mb-4 border-b-2 pb-1 ${
-                colorClass.includes("from-")
-                  ? colorClass.replace("from-", "border-")
-                  : "border-gray-300"
-              }`}
-            >
-              Skills
-            </h3>
+            <h3 className={`text-lg font-bold mb-4 border-b-2 pb-1 ${colorClass.includes("from-") ? colorClass.replace("from-", "border-") : "border-gray-300"}`}>Skills</h3>
 
             <div className="flex flex-wrap gap-2">
               {cvData.skills.map((skill, index) => (
-                <span
-                  key={index}
-                  className="inline-block rounded border border-gray-300 px-3 py-1 text-sm"
-                >
+                <span key={index} className="inline-block rounded border border-gray-300 px-3 py-1 text-sm">
                   {skill}
                 </span>
               ))}
@@ -143,23 +98,13 @@ export function ProfessionalTemplate() {
               {/* Languages */}
               {cvData.languages.length > 0 && (
                 <section className="mb-6">
-                  <h3
-                    className={`text-lg font-bold mb-4 border-b-2 pb-1 ${
-                      colorClass.includes("from-")
-                        ? colorClass.replace("from-", "border-")
-                        : "border-gray-300"
-                    }`}
-                  >
-                    Languages
-                  </h3>
+                  <h3 className={`text-lg font-bold mb-4 border-b-2 pb-1 ${colorClass.includes("from-") ? colorClass.replace("from-", "border-") : "border-gray-300"}`}>Languages</h3>
 
                   <ul className="space-y-2">
                     {cvData.languages.map((lang, index) => (
                       <li key={index} className="flex justify-between">
                         <span>{lang.language}</span>
-                        <span className="text-gray-600">
-                          {lang.proficiency}
-                        </span>
+                        <span className="text-gray-600">{lang.proficiency}</span>
                       </li>
                     ))}
                   </ul>
@@ -171,15 +116,7 @@ export function ProfessionalTemplate() {
               {/* Certifications */}
               {cvData.certifications.length > 0 && (
                 <section className="mb-6">
-                  <h3
-                    className={`text-lg font-bold mb-4 border-b-2 pb-1 ${
-                      colorClass.includes("from-")
-                        ? colorClass.replace("from-", "border-")
-                        : "border-gray-300"
-                    }`}
-                  >
-                    Certifications
-                  </h3>
+                  <h3 className={`text-lg font-bold mb-4 border-b-2 pb-1 ${colorClass.includes("from-") ? colorClass.replace("from-", "border-") : "border-gray-300"}`}>Certifications</h3>
 
                   <ul className="space-y-3">
                     {cvData.certifications.map((cert) => (
@@ -199,15 +136,7 @@ export function ProfessionalTemplate() {
           {/* Projects */}
           {cvData.projects.length > 0 && (
             <section className="mb-6">
-              <h3
-                className={`text-lg font-bold mb-4 border-b-2 pb-1 ${
-                  colorClass.includes("from-")
-                    ? colorClass.replace("from-", "border-")
-                    : "border-gray-300"
-                }`}
-              >
-                Projects
-              </h3>
+              <h3 className={`text-lg font-bold mb-4 border-b-2 pb-1 ${colorClass.includes("from-") ? colorClass.replace("from-", "border-") : "border-gray-300"}`}>Projects</h3>
 
               <div className="space-y-4">
                 {cvData.projects.map((project) => (
@@ -217,12 +146,8 @@ export function ProfessionalTemplate() {
 
                     {project.technologies.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
-                        <span className="text-sm text-gray-600">
-                          Technologies:{" "}
-                        </span>
-                        <span className="text-sm">
-                          {project.technologies.join(", ")}
-                        </span>
+                        <span className="text-sm text-gray-600">Technologies: </span>
+                        <span className="text-sm">{project.technologies.join(", ")}</span>
                       </div>
                     )}
                   </div>

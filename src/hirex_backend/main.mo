@@ -7,6 +7,8 @@ import Option "mo:base/Option";
 import Array "mo:base/Array";
 import List "mo:base/List";
 import Nat32 "mo:base/Nat32";
+import Time "mo:base/Time";
+import Int "mo:base/Int";
 import LLM "mo:llm";
 
 actor HireX {
@@ -54,7 +56,6 @@ actor HireX {
     id : ?Text;
     institution : ?Text;
     degree : ?Text;
-    field : ?Text;
     location : ?Text;
     startDate : ?Text;
     endDate : ?Text;
@@ -93,6 +94,7 @@ actor HireX {
     languages : ?[Language];
     projects : ?[Project];
     certifications : ?[Certification];
+    updatedAt: Int;
   };
 
   type Response<T> = Result.Result<T, Text>;
@@ -152,6 +154,7 @@ actor HireX {
       languages = null;
       projects = null;
       certifications = null;
+      updatedAt = Time.now();
     };
 
     nextResumeId += 1;
@@ -197,6 +200,7 @@ actor HireX {
               languages = if (params.languages != null) params.languages else resume.languages;
               projects = if (params.projects != null) params.projects else resume.projects;
               certifications = if (params.certifications != null) params.certifications else resume.certifications;
+              updatedAt = Time.now();
             };
 
             let updatedResumes = Array.map<Resume, Resume>(existingResumes, func(r) {
@@ -213,6 +217,29 @@ actor HireX {
     };
   };
 
+  type AnalyzeResumeParams = {
+
+  };
+  public func analyzeResume(prompt: Text) : async Text {
+    let command = "You are an AI career assistant. Only respond to career-related topics. Keep each response concise and under 1000 characters. If the response is too long, continue in the next response. Begin: ";
+    
+    var fullResponse = "";
+    var currentPrompt = command # " " # prompt;
+    var hasMore = true;
+
+    while (hasMore) {
+        let response = await LLM.prompt(#Llama3_1_8B, currentPrompt);
+        fullResponse := fullResponse # response;
+
+        if (response.size() >= 950) {
+            currentPrompt := "Continue from where you left off: ";
+        } else {
+            hasMore := false;
+        }
+    };
+
+    return fullResponse;
+  };
 
 
   // USER

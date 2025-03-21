@@ -55,9 +55,7 @@ export function CVProvider({ children, initialData }) {
   const updateExperience = (id, field, value) => {
     setCvData((prev) => ({
       ...prev,
-      experience: prev.experience.map((exp) =>
-        exp.id === id ? { ...exp, [field]: value } : exp
-      ),
+      experience: prev.experience.map((exp) => (exp.id === id ? { ...exp, [field]: value } : exp)),
     }));
   };
 
@@ -73,11 +71,7 @@ export function CVProvider({ children, initialData }) {
   const addAchievement = (expId) => {
     setCvData((prev) => ({
       ...prev,
-      experience: prev.experience.map((exp) =>
-        exp.id === expId
-          ? { ...exp, achievements: [...exp.achievements, ""] }
-          : exp
-      ),
+      experience: prev.experience.map((exp) => (exp.id === expId ? { ...exp, achievements: [...exp.achievements, ""] } : exp)),
     }));
   };
 
@@ -89,9 +83,7 @@ export function CVProvider({ children, initialData }) {
         exp.id === expId
           ? {
               ...exp,
-              achievements: exp.achievements.map((a, i) =>
-                i === index ? value : a
-              ),
+              achievements: exp.achievements.map((a, i) => (i === index ? value : a)),
             }
           : exp
       ),
@@ -135,9 +127,7 @@ export function CVProvider({ children, initialData }) {
   const updateEducation = (id, field, value) => {
     setCvData((prev) => ({
       ...prev,
-      education: prev.education.map((edu) =>
-        edu.id === id ? { ...edu, [field]: value } : edu
-      ),
+      education: prev.education.map((edu) => (edu.id === id ? { ...edu, [field]: value } : edu)),
     }));
   };
 
@@ -169,9 +159,7 @@ export function CVProvider({ children, initialData }) {
   const updateProject = (id, field, value) => {
     setCvData((prev) => ({
       ...prev,
-      projects: prev.projects.map((proj) =>
-        proj.id === id ? { ...proj, [field]: value } : proj
-      ),
+      projects: prev.projects.map((proj) => (proj.id === id ? { ...proj, [field]: value } : proj)),
     }));
   };
 
@@ -203,9 +191,7 @@ export function CVProvider({ children, initialData }) {
   const updateCertification = (id, field, value) => {
     setCvData((prev) => ({
       ...prev,
-      certifications: prev.certifications.map((cert) =>
-        cert.id === id ? { ...cert, [field]: value } : cert
-      ),
+      certifications: prev.certifications.map((cert) => (cert.id === id ? { ...cert, [field]: value } : cert)),
     }));
   };
 
@@ -265,34 +251,17 @@ export function CVProvider({ children, initialData }) {
         ...cvData,
         personalInfo: {
           ...cvData.personalInfo,
-          summary:
-            "Results-driven Senior Frontend Developer with 8+ years of experience crafting high-performance, responsive web applications. Expertise in React, Next.js, and modern JavaScript frameworks with a strong focus on code quality and user experience. Proven track record of leading development teams and delivering complex projects on time and within budget.",
+          summary: "Results-driven Senior Frontend Developer with 8+ years of experience crafting high-performance, responsive web applications. Expertise in React, Next.js, and modern JavaScript frameworks with a strong focus on code quality and user experience. Proven track record of leading development teams and delivering complex projects on time and within budget.",
         },
         experience: cvData.experience.map((exp) => ({
           ...exp,
-          description:
-            exp.id === "exp1"
-              ? "Led the frontend development team for the company's flagship SaaS platform, focusing on performance optimization, accessibility, and scalable architecture. Implemented CI/CD pipelines and established coding standards that improved overall code quality."
-              : exp.description,
-          achievements:
-            exp.id === "exp1"
-              ? [
-                  "Reduced page load time by 40% through code splitting, lazy loading, and optimized asset delivery",
-                  "Implemented a component library with Storybook that increased development speed by 30% and ensured UI consistency",
-                  "Led a team of 5 developers to deliver a major platform redesign that increased user engagement by 25%",
-                  "Introduced automated testing that reduced production bugs by 60% and improved release confidence",
-                ]
-              : exp.achievements,
+          description: exp.id === "exp1" ? "Led the frontend development team for the company's flagship SaaS platform, focusing on performance optimization, accessibility, and scalable architecture. Implemented CI/CD pipelines and established coding standards that improved overall code quality." : exp.description,
+          achievements: exp.id === "exp1" ? ["Reduced page load time by 40% through code splitting, lazy loading, and optimized asset delivery", "Implemented a component library with Storybook that increased development speed by 30% and ensured UI consistency", "Led a team of 5 developers to deliver a major platform redesign that increased user engagement by 25%", "Introduced automated testing that reduced production bugs by 60% and improved release confidence"] : exp.achievements,
         })),
       });
 
       // Generate AI suggestions
-      setAiSuggestions([
-        "Consider adding quantifiable achievements to your Digital Solutions experience",
-        "Your technical skills section could be organized by proficiency level",
-        "Add a brief description of technologies used in your education projects",
-        "Consider adding volunteer work or open source contributions to showcase community involvement",
-      ]);
+      setAiSuggestions(["Consider adding quantifiable achievements to your Digital Solutions experience", "Your technical skills section could be organized by proficiency level", "Add a brief description of technologies used in your education projects", "Consider adding volunteer work or open source contributions to showcase community involvement"]);
 
       setIsGenerating(false);
     }, 3000);
@@ -317,33 +286,11 @@ export function CVProvider({ children, initialData }) {
           title: jobTitle,
           summary: `Innovative ${jobTitle} with 8+ years of experience specializing in building scalable, high-performance web applications. Expert in React, Next.js, and modern frontend architecture with a proven track record of delivering exceptional user experiences. Passionate about clean code, performance optimization, and mentoring junior developers.`,
         },
-        skills: [
-          "React",
-          "Next.js",
-          "TypeScript",
-          "JavaScript",
-          "HTML5",
-          "CSS3",
-          "Tailwind CSS",
-          "Redux",
-          "Performance Optimization",
-          "Responsive Design",
-          "UI/UX",
-          "RESTful APIs",
-          "GraphQL",
-          "Jest",
-          "CI/CD",
-          "Webpack",
-        ],
+        skills: ["React", "Next.js", "TypeScript", "JavaScript", "HTML5", "CSS3", "Tailwind CSS", "Redux", "Performance Optimization", "Responsive Design", "UI/UX", "RESTful APIs", "GraphQL", "Jest", "CI/CD", "Webpack"],
       });
 
       // Generate AI suggestions specific to the job
-      setAiSuggestions([
-        `Highlight your experience with performance optimization, which is key for a ${jobTitle} role`,
-        `Emphasize team leadership and mentoring experience for this senior position`,
-        `Consider reorganizing your skills to put React and Next.js first as they're most relevant`,
-        `Add more detail about architecture decisions you've made in previous roles`,
-      ]);
+      setAiSuggestions([`Highlight your experience with performance optimization, which is key for a ${jobTitle} role`, `Emphasize team leadership and mentoring experience for this senior position`, `Consider reorganizing your skills to put React and Next.js first as they're most relevant`, `Add more detail about architecture decisions you've made in previous roles`]);
 
       setIsOptimizing(false);
     }, 3000);

@@ -1,108 +1,42 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft, Eye, Download, Sparkles, AlertTriangle, BarChart, CheckCircle, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Eye, Download, Sparkles, AlertTriangle, BarChart, CheckCircle, Loader2, SaveIcon, RssIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/core/components/ui/button";
 import { CVEditor } from "@/core/components/cv-generator/cv-editor";
 import { CVPreview } from "@/core/components/cv-generator/cv-preview";
 import { CVProvider } from "@/core/components/cv-generator/cv-context";
-import { defaultCVData } from "@/core/components/cv-generator/default-data";
 import { useRef } from "react";
+import { useNavigate, useParams } from "react-router";
+import { Actor } from "@dfinity/agent";
+import { useAuth } from "@/core/providers/auth-provider";
+import { LoadingOverlay } from "@/core/components/loading-overlay";
+import { extractOptValue } from "@/core/utils/canisterUtils";
+import { hirex_backend } from "declarations/hirex_backend";
+import { defaultCVData } from "../../core/components/cv-generator/default-data";
+import { useCV } from "../../core/components/cv-generator/cv-context";
+import { optValue } from "../../core/utils/canisterUtils";
 
 export default function CVGeneratorCreatepage() {
+  const { id } = useParams();
+  const { identity, isLoading: isAuthLoading } = useAuth();
+  const navigate = useNavigate();
+
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isOptimizing, setIsOptimizing] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
+
   const [resolvedIssues, setResolvedIssues] = useState([]);
   const [jobTitle, setJobTitle] = useState("Senior Frontend Developer");
   const [activeTab, setActiveTab] = useState("preview");
   const [activeAnalysisTab, setActiveAnalysisTab] = useState("analysis");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isOptimizing, setIsOptimizing] = useState(false);
+
+  const [defaultResumeData, setDefaultResumeData] = useState(null);
 
   // Add these new state variables after the existing state declarations
   const [isAnalyzed, setIsAnalyzed] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-
-  // Function to download CV
-  const downloadCV = () => {
-    setIsDownloading(true);
-
-    import("html2pdf.js")
-      .then((html2pdfModule) => {
-        const html2pdf = html2pdfModule.default;
-
-        const previewRef = cvPreviewRef.current;
-        if (!previewRef) {
-          console.error("CV preview reference not properly set up");
-          setIsDownloading(false);
-          return;
-        }
-
-        const element = previewRef.prepareForPDF();
-        if (!element) {
-          console.error("Failed to prepare CV for PDF generation");
-          setIsDownloading(false);
-          return;
-        }
-
-        const tempContainer = document.createElement("div");
-        tempContainer.style.position = "absolute";
-        tempContainer.style.left = "-9999px";
-        tempContainer.style.top = "-9999px";
-        tempContainer.appendChild(element);
-        document.body.appendChild(tempContainer);
-
-        const opt = {
-          margin: [0, 0, 0, 0],
-          image: { type: "jpeg", quality: 1.0 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            removeContainer: true,
-            letterRendering: true,
-            allowTaint: true,
-            backgroundColor: "#ffffff",
-            windowHeight: element.scrollHeight,
-          },
-          jsPDF: {
-            unit: "mm",
-            format: "a4",
-            orientation: "portrait",
-            precision: 16,
-            compress: true,
-            putOnlyUsedFonts: true,
-            floatPrecision: 16,
-          },
-        };
-
-        html2pdf()
-          .from(element)
-          .set(opt)
-          .outputPdf("blob") // Output sebagai blob
-          .then((blob) => {
-            // Buat URL untuk blob dan buka di tab baru
-            const pdfUrl = URL.createObjectURL(blob);
-            window.open(pdfUrl, "_blank");
-
-            // Bersihkan elemen sementara
-            document.body.removeChild(tempContainer);
-            setIsDownloading(false);
-          })
-          .catch((error) => {
-            console.error("Error generating PDF:", error);
-            if (document.body.contains(tempContainer)) {
-              document.body.removeChild(tempContainer);
-            }
-            setIsDownloading(false);
-          });
-      })
-      .catch((error) => {
-        console.error("Error loading html2pdf:", error);
-        setIsDownloading(false);
-      });
-  };
 
   // Add this function before the return statement
   const handleAnalyzeResume = () => {
@@ -117,65 +51,46 @@ export default function CVGeneratorCreatepage() {
 
   const cvPreviewRef = useRef(null);
 
-  return (
+  useEffect(() => {
+    if (!identity) return;
+
+    async function fetchResume() {
+      Actor.agentOf(hirex_backend).replaceIdentity(identity);
+      const response = await hirex_backend.resume({ resumeId: Number(id) });
+      setIsLoading(false);
+      if ("ok" in response) {
+        try {
+          setDefaultResumeData({
+            personalInfo: extractOptValue(response.ok.personalInfo) ?? formData.personalInfo,
+            experience: extractOptValue(response.ok.experience) ?? [],
+            education: extractOptValue(response.ok.education) ?? [],
+            certifications: extractOptValue(response.ok.certifications) ?? [],
+            projects: extractOptValue(response.ok.projects) ?? [],
+            skills: extractOptValue(response.ok.skills) ?? [],
+            languages: extractOptValue(response.ok.languages) ?? [],
+          });
+        } catch (err) {
+          setDefaultResumeData(defaultCVData);
+        }
+      } else {
+        console.log("err", response.err);
+        navigate("/dashboard");
+      }
+    }
+
+    fetchResume();
+  }, [identity]);
+
+  useEffect(() => {
+    if (defaultResumeData) setIsLoading(false);
+  }, [defaultResumeData]);
+
+  return isLoading || isAuthLoading ? (
+    <LoadingOverlay isLoading={isLoading || isAuthLoading} message={"Creating your CV..."} />
+  ) : (
     <div className="min-h-screen w-full bg-black text-white px-10">
-      {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-black/90 backdrop-blur-sm">
-        <div className="flex h-16 items-center justify-between px-6">
-          <div className="flex items-center gap-4">
-            <a href="#">
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:bg-white/5 hover:text-white">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
-              </Button>
-            </a>
-            <h1 className="text-xl font-semibold text-white">CV Generator</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button className="bg-gradient-to-r from-cyan-400 to-violet-500 text-black hover:from-cyan-500 hover:to-violet-600">
-              {isOptimizing ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Optimizing...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  One Click Optimizer
-                </>
-              )}
-            </Button>
-            <Button variant="outline" className="border-white/10 text-white hover:bg-white/10" onClick={downloadCV} disabled={isDownloading}>
-              {isDownloading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating PDF...
-                </>
-              ) : (
-                <>
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Resume
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex px-6">
-          <button onClick={() => setActiveTab("preview")} className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${activeTab === "preview" ? "border-cyan-400 text-cyan-400" : "border-transparent text-gray-400 hover:border-gray-700 hover:text-white"}`}>
-            <Eye className="h-4 w-4" />
-            Preview
-          </button>
-          <button onClick={() => setActiveTab("analysis")} className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${activeTab === "analysis" ? "border-cyan-400 text-cyan-400" : "border-transparent text-gray-400 hover:border-gray-700 hover:text-white"}`}>
-            <BarChart className="h-4 w-4" />
-            Resume Analysis
-            <span className="ml-2 rounded bg-green-600/20 px-2 py-0.5 text-xs font-medium text-green-400">84%</span>
-          </button>
-        </div>
-      </header>
-
-      <CVProvider initialData={defaultCVData}>
+      <CVProvider initialData={defaultResumeData}>
+        <CVGeneratorHeader setActiveTab={setActiveTab} activeTab={activeTab} cvPreviewRef={cvPreviewRef} />
         <div className="min-h-screen">
           {/* Main Content */}
           <div className="space-y-6">
@@ -203,7 +118,7 @@ export default function CVGeneratorCreatepage() {
                               <h2 className="text-2xl font-semibold mb-3">Resume Analysis</h2>
                               <p className="text-gray-400 mb-6">Get detailed insights and improvement suggestions for your resume</p>
                             </div>
-                            <Button onClick={handleAnalyzeResume} className="bg-gradient-to-r from-cyan-400 to-violet-500 text-black hover:from-cyan-500 hover:to-violet-600 px-8 py-6 text-lg">
+                            <Button onClick={handleAnalyzeResume} className="text-gray-400 hover:bg-white/10 hover:text-white px-8 py-6 text-lg">
                               <BarChart className="mr-2 h-5 w-5" />
                               Analyze this resume
                             </Button>
@@ -413,5 +328,187 @@ export default function CVGeneratorCreatepage() {
         </div>
       </CVProvider>
     </div>
+  );
+}
+
+export function CVGeneratorHeader({ setActiveTab, activeTab, cvPreviewRef }) {
+  const { id } = useParams();
+  const { cvData } = useCV();
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const { identity } = useAuth();
+
+  const downloadCV = () => {
+    setIsDownloading(true);
+
+    import("html2pdf.js")
+      .then((html2pdfModule) => {
+        const html2pdf = html2pdfModule.default;
+
+        const previewRef = cvPreviewRef.current;
+        if (!previewRef) {
+          console.error("CV preview reference not properly set up");
+          setIsDownloading(false);
+          return;
+        }
+
+        const element = previewRef.prepareForPDF();
+        if (!element) {
+          console.error("Failed to prepare CV for PDF generation");
+          setIsDownloading(false);
+          return;
+        }
+
+        const tempContainer = document.createElement("div");
+        tempContainer.style.position = "absolute";
+        tempContainer.style.left = "-9999px";
+        tempContainer.style.top = "-9999px";
+        tempContainer.appendChild(element);
+        document.body.appendChild(tempContainer);
+
+        const opt = {
+          margin: [0, 0, 0, 0],
+          image: { type: "jpeg", quality: 1.0 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            removeContainer: true,
+            letterRendering: true,
+            allowTaint: true,
+            backgroundColor: "#ffffff",
+            windowHeight: element.scrollHeight,
+          },
+          jsPDF: {
+            unit: "mm",
+            format: "a4",
+            orientation: "portrait",
+            precision: 16,
+            compress: true,
+            putOnlyUsedFonts: true,
+            floatPrecision: 16,
+          },
+        };
+
+        html2pdf()
+          .from(element)
+          .set(opt)
+          .outputPdf("blob") // Output sebagai blob
+          .then((blob) => {
+            // Buat URL untuk blob dan buka di tab baru
+            const pdfUrl = URL.createObjectURL(blob);
+            window.open(pdfUrl, "_blank");
+
+            // Bersihkan elemen sementara
+            document.body.removeChild(tempContainer);
+            setIsDownloading(false);
+          })
+          .catch((error) => {
+            console.error("Error generating PDF:", error);
+            if (document.body.contains(tempContainer)) {
+              document.body.removeChild(tempContainer);
+            }
+            setIsDownloading(false);
+          });
+      })
+      .catch((error) => {
+        console.error("Error loading html2pdf:", error);
+        setIsDownloading(false);
+      });
+  };
+
+  async function handleSave() {
+    setIsSaving(true);
+    Actor.agentOf(hirex_backend).replaceIdentity(identity);
+
+    console.log({
+      resumeId: Number(id),
+      personalInfo: optValue(cvData.personalInfo),
+      experience: optValue(cvData.experience),
+      projects: optValue(cvData.projects),
+      certifications: optValue(cvData.certifications),
+      education: optValue(cvData.education),
+      languages: optValue(cvData.languages),
+      skills: optValue(cvData.skills),
+    });
+    const response = await hirex_backend.updateResume({
+      resumeId: Number(id),
+      personalInfo: optValue(cvData.personalInfo),
+      experience: optValue(cvData.experience),
+      projects: optValue(cvData.projects),
+      certifications: optValue(cvData.certifications),
+      education: optValue(cvData.education),
+      languages: optValue(cvData.languages),
+      skills: optValue(cvData.skills),
+    });
+    setIsSaving(false);
+    console.log("response", response);
+
+    if ("ok" in response) {
+    } else {
+      console.log("err", response.err);
+    }
+  }
+
+  return (
+    <header className="sticky top-0 z-30 border-b border-white/10 bg-black/90 backdrop-blur-sm">
+      <div className="flex h-16 items-center justify-between px-6">
+        <div className="flex items-center gap-4">
+          <a
+            href="#"
+            onClick={() => {
+              navigate("/dashboard/cv-generator");
+            }}
+          >
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:bg-white/5 hover:text-white">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back
+            </Button>
+          </a>
+          <h1 className="text-xl font-semibold text-white">CV Generator</h1>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button className="text-gray-400 hover:bg-white/10 hover:text-white" onClick={handleSave}>
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving data...
+              </>
+            ) : (
+              <>
+                <SaveIcon className="mr-2 h-4 w-4" />
+                Save Resume
+              </>
+            )}
+          </Button>
+          <Button className="text-gray-400 hover:bg-white/10 hover:text-white" onClick={downloadCV} disabled={isDownloading}>
+            {isDownloading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating PDF...
+              </>
+            ) : (
+              <>
+                <Download className="mr-2 h-4 w-4" />
+                Download Resume
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex px-6">
+        <button onClick={() => setActiveTab("preview")} className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${activeTab === "preview" ? "border-cyan-400 text-cyan-400" : "border-transparent text-gray-400 hover:border-gray-700 hover:text-white"}`}>
+          <Eye className="h-4 w-4" />
+          Preview
+        </button>
+        <button onClick={() => setActiveTab("analysis")} className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${activeTab === "analysis" ? "border-cyan-400 text-cyan-400" : "border-transparent text-gray-400 hover:border-gray-700 hover:text-white"}`}>
+          <BarChart className="h-4 w-4" />
+          Resume Analysis
+          <span className="ml-2 rounded bg-green-600/20 px-2 py-0.5 text-xs font-medium text-green-400">84%</span>
+        </button>
+      </div>
+    </header>
   );
 }

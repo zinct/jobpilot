@@ -122,7 +122,6 @@ export default function CVGeneratorBuilderPage() {
               id: "edu-temp",
               institution: "",
               degree: "",
-              field: "",
               startDate: "",
               endDate: "",
               description: "",
@@ -904,24 +903,6 @@ export default function CVGeneratorBuilderPage() {
                               className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
                               placeholder="Bachelor of Science"
                               required
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-300">Field of Study</label>
-                            <input
-                              type="text"
-                              value={edu.field}
-                              onChange={(e) => {
-                                // If this is a temporary item, add it to the real array first
-                                if (edu.id.includes("-temp")) {
-                                  addItem("education");
-                                  return;
-                                }
-                                handleChange("education", "field", e.target.value, edu.id);
-                              }}
-                              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
-                              placeholder="Computer Science"
                             />
                           </div>
 

@@ -16,6 +16,29 @@ export function getInternetIdentityNetwork() {
   }
 }
 
+export function formatTimestamp(initialTimestamp) {
+  let timestamp = initialTimestamp;
+  if (typeof initialTimestamp === "bigint") {
+    timestamp = Number(initialTimestamp);
+  }
+
+  const now = Date.now();
+  const inputTime = timestamp / 1_000_000;
+  const diff = Math.floor((now - inputTime) / 1000);
+
+  if (diff < 60) {
+    return `Last updated: ${diff} Seconds ago`;
+  } else if (diff < 3600) {
+    return `Last updated: ${Math.floor(diff / 60)} Minutes ago`;
+  } else if (diff < 86400) {
+    return `Last updated: Yesterday`;
+  } else if (diff < 604800) {
+    return `Last updated: ${Math.floor(diff / 86400)} Days ago`;
+  } else {
+    return `Last updated: ${Math.floor(diff / 604800)} Weeks ago`;
+  }
+}
+
 export function mapOptionalToFormattedJSON(data) {
   if (!data || typeof data !== "object") return data;
 

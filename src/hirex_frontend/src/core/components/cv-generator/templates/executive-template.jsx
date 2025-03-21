@@ -8,22 +8,14 @@ export function ExecutiveTemplate() {
     <div className="flex flex-col h-full bg-white text-gray-800">
       {/* Header */}
       <header className="p-8 border-b-8 border-gray-800">
-        <h1 className="text-4xl font-bold uppercase tracking-wider">
-          {cvData.personalInfo.name}
-        </h1>
-        <h2
-          className={`text-xl mt-1 uppercase tracking-wide text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}
-        >
-          {cvData.personalInfo.title}
-        </h2>
+        <h1 className="text-2xl font-bold uppercase tracking-wider">{cvData.personalInfo.name}</h1>
+        <h2 className={`text-xl mt-1 tracking-wide text-gradient-to-r ${colorClass} bg-clip-text  `}>{cvData.personalInfo.title}</h2>
 
         <div className="mt-4 flex flex-wrap gap-6 text-sm">
           <div>{cvData.personalInfo.email}</div>
           <div>{cvData.personalInfo.phone}</div>
           <div>{cvData.personalInfo.location}</div>
-          {cvData.personalInfo.website && (
-            <div>{cvData.personalInfo.website}</div>
-          )}
+          {cvData.personalInfo.website && <div>{cvData.personalInfo.website}</div>}
         </div>
       </header>
 
@@ -32,17 +24,13 @@ export function ExecutiveTemplate() {
         <div className="w-full">
           {/* Summary */}
           <section className="mb-8">
-            <h3 className="text-xl font-bold uppercase tracking-wider mb-4 border-b-2 border-gray-300 pb-1">
-              Executive Summary
-            </h3>
+            <h3 className="text-xl font-bold uppercase tracking-wider mb-4 border-b-2 border-gray-300 pb-1">Executive Summary</h3>
             <p className="text-gray-700">{cvData.personalInfo.summary}</p>
           </section>
 
           {/* Experience */}
           <section className="mb-8">
-            <h3 className="text-xl font-bold uppercase tracking-wider mb-6 border-b-2 border-gray-300 pb-1">
-              Professional Experience
-            </h3>
+            <h3 className="text-xl font-bold uppercase tracking-wider mb-6 border-b-2 border-gray-300 pb-1">Professional Experience</h3>
 
             <div className="space-y-6">
               {cvData.experience.map((exp) => (
@@ -53,9 +41,7 @@ export function ExecutiveTemplate() {
                       {exp.startDate} - {exp.current ? "Present" : exp.endDate}
                     </div>
                   </div>
-                  <div
-                    className={`text-base font-medium text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}
-                  >
+                  <div className={`text-base font-medium text-gradient-to-r ${colorClass} bg-clip-text  `}>
                     {exp.company}, {exp.location}
                   </div>
                   <p className="mt-2 text-gray-700">{exp.description}</p>
@@ -79,9 +65,7 @@ export function ExecutiveTemplate() {
             <div className="w-1/2">
               {/* Education */}
               <section className="mb-8">
-                <h3 className="text-xl font-bold uppercase tracking-wider mb-4 border-b-2 border-gray-300 pb-1">
-                  Education
-                </h3>
+                <h3 className="text-xl font-bold uppercase tracking-wider mb-4 border-b-2 border-gray-300 pb-1">Education</h3>
 
                 <div className="space-y-4">
                   {cvData.education.map((edu) => (
@@ -93,11 +77,7 @@ export function ExecutiveTemplate() {
                       <div className="text-sm text-gray-600">
                         {edu.startDate} - {edu.endDate}
                       </div>
-                      {edu.description && (
-                        <p className="mt-1 text-sm text-gray-700">
-                          {edu.description}
-                        </p>
-                      )}
+                      {edu.description && <p className="mt-1 text-sm text-gray-700">{edu.description}</p>}
                     </div>
                   ))}
                 </div>
@@ -106,9 +86,7 @@ export function ExecutiveTemplate() {
               {/* Certifications */}
               {cvData.certifications.length > 0 && (
                 <section className="mb-8">
-                  <h3 className="text-xl font-bold uppercase tracking-wider mb-4 border-b-2 border-gray-300 pb-1">
-                    Certifications
-                  </h3>
+                  <h3 className="text-xl font-bold uppercase tracking-wider mb-4 border-b-2 border-gray-300 pb-1">Certifications</h3>
 
                   <ul className="space-y-2">
                     {cvData.certifications.map((cert) => (
@@ -127,18 +105,12 @@ export function ExecutiveTemplate() {
             <div className="w-1/2">
               {/* Skills */}
               <section className="mb-8">
-                <h3 className="text-xl font-bold uppercase tracking-wider mb-4 border-b-2 border-gray-300 pb-1">
-                  Core Competencies
-                </h3>
+                <h3 className="text-xl font-bold uppercase tracking-wider mb-4 border-b-2 border-gray-300 pb-1">Core Competencies</h3>
 
                 <div className="grid grid-cols-2 gap-2">
                   {cvData.skills.map((skill, index) => (
                     <div key={index} className="flex items-center">
-                      <span
-                        className={`mr-2 text-gradient-to-r ${colorClass} bg-clip-text text-transparent`}
-                      >
-                        •
-                      </span>
+                      <span className={`mr-2 text-gradient-to-r ${colorClass} bg-clip-text  `}>•</span>
                       <span>{skill}</span>
                     </div>
                   ))}
@@ -148,17 +120,13 @@ export function ExecutiveTemplate() {
               {/* Languages */}
               {cvData.languages.length > 0 && (
                 <section className="mb-8">
-                  <h3 className="text-xl font-bold uppercase tracking-wider mb-4 border-b-2 border-gray-300 pb-1">
-                    Languages
-                  </h3>
+                  <h3 className="text-xl font-bold uppercase tracking-wider mb-4 border-b-2 border-gray-300 pb-1">Languages</h3>
 
                   <ul className="space-y-1">
                     {cvData.languages.map((lang, index) => (
                       <li key={index} className="flex justify-between">
                         <span>{lang.language}</span>
-                        <span className="text-gray-600">
-                          {lang.proficiency}
-                        </span>
+                        <span className="text-gray-600">{lang.proficiency}</span>
                       </li>
                     ))}
                   </ul>
@@ -168,23 +136,15 @@ export function ExecutiveTemplate() {
               {/* Projects */}
               {cvData.projects.length > 0 && (
                 <section className="mb-8">
-                  <h3 className="text-xl font-bold uppercase tracking-wider mb-4 border-b-2 border-gray-300 pb-1">
-                    Key Projects
-                  </h3>
+                  <h3 className="text-xl font-bold uppercase tracking-wider mb-4 border-b-2 border-gray-300 pb-1">Key Projects</h3>
 
                   <div className="space-y-3">
                     {cvData.projects.map((project) => (
                       <div key={project.id}>
                         <h4 className="font-bold">{project.title}</h4>
-                        <p className="mt-1 text-sm text-gray-700">
-                          {project.description}
-                        </p>
+                        <p className="mt-1 text-sm text-gray-700">{project.description}</p>
 
-                        {project.technologies.length > 0 && (
-                          <div className="mt-1 text-sm text-gray-600 italic">
-                            Technologies: {project.technologies.join(", ")}
-                          </div>
-                        )}
+                        {project.technologies.length > 0 && <div className="mt-1 text-sm text-gray-600 italic">Technologies: {project.technologies.join(", ")}</div>}
                       </div>
                     ))}
                   </div>
