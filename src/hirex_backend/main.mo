@@ -9,6 +9,7 @@ import List "mo:base/List";
 import Nat32 "mo:base/Nat32";
 import Time "mo:base/Time";
 import Int "mo:base/Int";
+import Nat "mo:base/Nat";
 import LLM "mo:llm";
 
 actor HireX {
@@ -220,26 +221,26 @@ actor HireX {
   type AnalyzeResumeParams = {
 
   };
-  public func analyzeResume(prompt: Text) : async Text {
-    let command = "You are an AI career assistant. Only respond to career-related topics. Keep each response concise and under 1000 characters. If the response is too long, continue in the next response. Begin: ";
-    
-    var fullResponse = "";
-    var currentPrompt = command # " " # prompt;
-    var hasMore = true;
+  public func analyzeResume(prompt : Text) : async Text {
+    var fullResponse : Text = "";
+    var continueFetching : Bool = true;
+    var offset : Nat = 0;
+    let maxChars : Nat = 600;
 
-    while (hasMore) {
-        let response = await LLM.prompt(#Llama3_1_8B, currentPrompt);
-        fullResponse := fullResponse # response;
+    while (continueFetching) {
+        let partialResponse = await LLM.prompt(#Llama3_1_8B, prompt # " offset:" # Nat.toText(offset) # " limit:" # Nat.toText(maxChars));
+        fullResponse := fullResponse # partialResponse;
 
-        if (response.size() >= 950) {
-            currentPrompt := "Continue from where you left off: ";
+        if (Text.size(partialResponse) < maxChars) {
+            continueFetching := false;
         } else {
-            hasMore := false;
-        }
+            offset := offset + maxChars;
+        };
     };
 
     return fullResponse;
   };
+
 
 
   // USER
