@@ -27,6 +27,10 @@
   }
 }
 
+select option {
+  background-color: black !important;
+}
+
 html,
 body {
   background-color: black;

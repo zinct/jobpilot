@@ -1,16 +1,20 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 // Create context
 const CVContext = createContext(null);
 
 // Context provider
-export function CVProvider({ children, initialData }) {
+export function CVProvider({ children, initialData, onDataChange }) {
   const [cvData, setCvData] = useState(initialData);
   const [template, setTemplate] = useState("modern");
   const [colorScheme, setColorScheme] = useState("gradient");
   const [fontSize, setFontSize] = useState("medium");
   const [activeSection, setActiveSection] = useState("personalInfo");
   const [aiSuggestions, setAiSuggestions] = useState([]);
+
+  useEffect(() => {
+    onDataChange(cvData);
+  }, [cvData]);
 
   // Function to update CV data
   const updateCvData = (section, data) => {

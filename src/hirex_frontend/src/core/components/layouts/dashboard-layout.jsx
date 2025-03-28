@@ -2,22 +2,47 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { BrainCircuit, FileText, Briefcase, BookOpen, MessageSquare, Bell, User, Settings, LogOut, Search } from "lucide-react";
+import { BrainCircuit, FileText, Briefcase, MessageSquare, User, LogOut, FileSearch } from "lucide-react";
 import { Button } from "@/core/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/core/components/ui/dropdown-menu";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { useAuth } from "../../providers/auth-provider";
 import { LoadingOverlay } from "../loading-overlay";
-import { hirex_backend } from "../../../../../declarations/hirex_backend";
-import { Actor } from "@dfinity/agent";
+
+const menuItems = [
+  {
+    path: "/dashboard",
+    name: "Overview",
+    icon: <BrainCircuit className="h-6 w-6" />,
+  },
+  {
+    path: "/dashboard/cv-generator",
+    name: "Resume Builder",
+    icon: <FileText className="h-6 w-6" />,
+  },
+  {
+    name: "Resume Analysis",
+    path: "/dashboard/cv-analysis",
+    icon: <FileSearch className="h-6 w-6" />,
+  },
+  {
+    path: "/dashboard/job-recommendations",
+    name: "Job Recommendations",
+    icon: <Briefcase className="h-6 w-6" />,
+  },
+
+  {
+    path: "/dashboard/career-chatbot",
+    name: "Career Assistant",
+    icon: <MessageSquare className="h-6 w-6" />,
+  },
+];
 
 export default function DashboardLayout() {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { isLoading, logout, identity } = useAuth();
+  const { isLoading, logout, user } = useAuth();
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, []);
@@ -30,33 +55,14 @@ export default function DashboardLayout() {
     navigate(item.path);
   }
 
-  const menuItems = [
-    {
-      path: "/dashboard",
-      name: "Overview",
-      icon: <BrainCircuit className="h-6 w-6" />,
-    },
-    {
-      path: "/dashboard/cv-generator",
-      name: "CV Generator",
-      icon: <FileText className="h-6 w-6" />,
-    },
-    {
-      path: "/dashboard/job-recommendations",
-      name: "Job Recommendations",
-      icon: <Briefcase className="h-6 w-6" />,
-    },
-    {
-      path: "/dashboard/course-recommendations",
-      name: "Course Recommendations",
-      icon: <BookOpen className="h-6 w-6" />,
-    },
-    {
-      path: "/dashboard/career-chatbot",
-      name: "Career Chatbot",
-      icon: <MessageSquare className="h-6 w-6" />,
-    },
-  ];
+  function getInitials(name) {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+  }
 
   return isLoading ? (
     <LoadingOverlay isLoading={isLoading} message={"Please wait, your application is being processed..."} />
@@ -78,13 +84,12 @@ export default function DashboardLayout() {
         {/* Logo */}
         <div className="flex h-20 items-center border-b border-white/10 px-6">
           <a href="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-violet-500">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50">
               <BrainCircuit className="h-5 w-5 text-white" />
             </div>
-            <span className="text-2xl font-bold">HireX</span>
+            <span className="text-2xl font-bold">JobPilot</span>
           </a>
         </div>
-
         {/* Navigation */}
         <nav className="flex-1 space-y-1 overflow-y-auto p-4">
           <div className="mb-6 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Main Menu</div>
@@ -104,28 +109,44 @@ export default function DashboardLayout() {
           <div className="my-6 border-t border-white/10 pt-6">
             <div className="mb-6 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Account</div>
 
-            <a href="/dashboard/profile" className="group mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-lg font-medium text-gray-400 transition-all hover:bg-white/5 hover:text-white">
+            <a
+              href="#"
+              onClick={() => {
+                navigate("/dashboard/profile");
+              }}
+              className="group mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-lg font-medium text-gray-400 transition-all hover:bg-white/5 hover:text-white"
+            >
               <User className="h-6 w-6 text-gray-400 group-hover:text-white" />
               <span>Profile</span>
             </a>
           </div>
         </nav>
-
         {/* User Profile */}
         <div className="border-t border-white/10 p-4">
           <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-violet-500">
-              <span className="text-lg font-medium text-white">JS</span>
-            </div>
+            {isLoading ? (
+              <div className="flex h-12 w-12 animate-pulse items-center justify-center rounded-full bg-gray-700" />
+            ) : (
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-violet-500">
+                <span className="text-lg font-medium text-white">{getInitials(user?.fullName ?? "")}</span>
+              </div>
+            )}
+
             <div className="flex-1 overflow-hidden">
-              <h4 className="truncate font-medium">John Smith</h4>
-              <p className="truncate text-sm text-gray-400">john.smith@example.com</p>
+              {isLoading ? <div className="h-5 w-24 animate-pulse rounded bg-gray-700" /> : <h4 className="truncate font-medium">{user?.fullName ?? ""}</h4>}
+
+              {isLoading ? <div className="mt-1 h-4 w-32 animate-pulse rounded bg-gray-700" /> : <p className="truncate text-sm text-gray-400">{user?.jobRoles[0] ?? ""}</p>}
             </div>
-            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-gray-400 hover:bg-white/10 hover:text-white" asChild>
-              <a href="/" onClick={logout}>
-                <LogOut className="h-5 w-5" />
-              </a>
-            </Button>
+
+            {isLoading ? (
+              <div className="h-9 w-9 animate-pulse rounded-full bg-gray-700" />
+            ) : (
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-gray-400 hover:bg-white/10 hover:text-white" asChild>
+                <a href="/" onClick={logout}>
+                  <LogOut className="h-5 w-5" />
+                </a>
+              </Button>
+            )}
           </div>
         </div>
       </aside>
@@ -133,47 +154,14 @@ export default function DashboardLayout() {
       {/* Main Content */}
       <div className="md:pl-72 pt-10">
         {/* Header */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-black/80 px-4 backdrop-blur-md md:h-20 md:px-6">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-black/80 px-4 backdrop-blur-md md:h-20 md:px-6 container">
           <div className="ml-10 md:ml-0">
             <h1 className="text-xl font-bold md:text-2xl">{menuItems.find((item) => isActive(item.path))?.name || "Dashboard"}</h1>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="relative hidden md:block">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <input type="text" placeholder="Search..." className="w-64 rounded-full border border-white/10 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder-gray-400 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400" />
-            </div>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative text-gray-400 hover:text-white">
-                  <Bell className="h-6 w-6" />
-                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-cyan-400 text-xs text-black">3</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80 border-white/10 bg-gray-900 text-white">
-                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-white/10" />
-                <div className="max-h-80 overflow-y-auto">
-                  {[1, 2, 3].map((i) => (
-                    <DropdownMenuItem key={i} className="flex cursor-pointer flex-col items-start py-3 hover:bg-white/5">
-                      <div className="flex w-full items-start justify-between">
-                        <span className="font-medium">New job match found</span>
-                        <span className="text-xs text-gray-400">{i}h ago</span>
-                      </div>
-                      <span className="mt-1 text-sm text-gray-400">A new job matching your profile has been found.</span>
-                    </DropdownMenuItem>
-                  ))}
-                </div>
-                <DropdownMenuSeparator className="bg-white/10" />
-                <DropdownMenuItem className="cursor-pointer justify-center text-center text-sm text-cyan-400 hover:bg-white/5">View all notifications</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="min-h-[calc(100vh-5rem)] p-4 md:p-6">
+        <main className="min-h-[calc(100vh-5rem)] p-4 md:p-6 container">
           <Outlet />
         </main>
       </div>

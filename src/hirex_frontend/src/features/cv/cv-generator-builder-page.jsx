@@ -17,17 +17,6 @@ const commonSkills = ["JavaScript", "TypeScript", "React", "Next.js", "Node.js",
 // Common technologies for projects
 const commonTechnologies = ["React", "Next.js", "TypeScript", "JavaScript", "Node.js", "Express", "MongoDB", "PostgreSQL", "MySQL", "Firebase", "AWS", "Docker", "GraphQL", "REST API", "Redux", "Context API", "Tailwind CSS", "SCSS", "Material UI", "Chakra UI", "Jest", "React Testing Library", "Cypress", "GitHub Actions"];
 
-// Common languages and proficiency levels
-const commonLanguages = ["English", "Spanish", "French", "German", "Chinese", "Japanese", "Russian", "Arabic", "Hindi", "Portuguese", "Italian"];
-
-const proficiencyLevels = [
-  { value: "Native", label: "Native" },
-  { value: "Fluent", label: "Fluent" },
-  { value: "Advanced", label: "Advanced" },
-  { value: "Intermediate", label: "Intermediate" },
-  { value: "Basic", label: "Basic" },
-];
-
 const totalSteps = 6; // Total number of steps in the form
 
 export default function CVGeneratorBuilderPage() {

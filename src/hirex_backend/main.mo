@@ -12,22 +12,26 @@ import Int "mo:base/Int";
 import Nat "mo:base/Nat";
 import LLM "mo:llm";
 
+import Cycles "mo:base/ExperimentalCycles";
+import IC "ic:aaaaa-aa";
+import Blob "mo:base/Blob";
+
 actor HireX {
   type User = {
-    full_name : ?Text;
-    date_of_birth : ?Nat;
-    years_of_experience : ?Text;
-    education_level : ?Text;
-    personality_traits : ?[Text];
-    learning_style : ?Text;
-    job_roles : ?[Text];
-    job_search_status : ?Text;
-    job_level : ?Text;
-    work_mode : ?Text;
-    company_size : ?Text;
-    industries_of_interest : ?[Text];
-    expected_location : ?Text;
-    is_registered : ?Nat8;
+    fullName : ?Text;
+    dateOfBirth : ?Nat;
+    yearsOfExperience : ?Text;
+    educationLevel : ?Text;
+    personalityTraits : ?[Text];
+    learningStyle : ?Text;
+    jobRoles : ?[Text];
+    jobSearchStatus : ?Text;
+    jobLevel : ?Text;
+    workMode : ?Text;
+    companySize : ?Text;
+    industriesOfInterest : ?[Text];
+    expectedLocation : ?Text;
+    isRegistered : ?Nat8;
   };
 
   // Resume
@@ -218,30 +222,46 @@ actor HireX {
     };
   };
 
-  type AnalyzeResumeParams = {
-
+  public func analyzeResumeJSON(prompt : Text) : async Response<Text> {
+    let defaultPrompt : Text = "You are an AI Career Assistant. Your task is to analyze a given resume JSON and provide feedback on missing or improvable elements only on description / summary / tagline / position title data. Your response will be consumed by my system and delivered to users.\nEnsure the output is a JSON array (maximum of 3 items) with the following structure. Keep the response concise and under 1000 characters, and make descriptions short and direct:\n[\n  {\n    \"title\": \"Issue Title\",\n    \"description\": \"Explanation of the issue and why it matters.\"\n  }\n]\n.";
+    let response = await LLM.prompt(#Llama3_1_8B, defaultPrompt # " " # prompt);
+    return #ok(response);
   };
-  public func analyzeResume(prompt : Text) : async Text {
-    var fullResponse : Text = "";
-    var continueFetching : Bool = true;
-    var offset : Nat = 0;
-    let maxChars : Nat = 600;
 
-    while (continueFetching) {
-        let partialResponse = await LLM.prompt(#Llama3_1_8B, prompt # " offset:" # Nat.toText(offset) # " limit:" # Nat.toText(maxChars));
-        fullResponse := fullResponse # partialResponse;
+  type analyzeResumeParams = {
+    resume : Text;
+    responseType : Text;
+  };
+  public func analyzeResume(params : analyzeResumeParams) : async Response<Text> {
+    let defaultPrompt : Text = "You are an expert Resume AI Career Assistant, Your task is to analyze a given resume. Keep the response concise and under 1000 characters. Your response will be consumed by my system and delivered to users.\nEnsure the output is a JSON array with the following structure: [\"point 1\", \"point 2\"].\nEvaluate the following resume.:";
+    let response = await LLM.prompt(#Llama3_1_8B, defaultPrompt # " " # params.resume # " " # "Provide the following outputs: - " # params.responseType);
+    return #ok(response);
+  };
 
-        if (Text.size(partialResponse) < maxChars) {
-            continueFetching := false;
-        } else {
-            offset := offset + maxChars;
-        };
+  public func resumeScore(prompt : Text) : async Response<Text> {
+    let defaultPrompt : Text = "You are an AI Career Assistant. Your task is to analyze a given resume JSON and provide a score from 0 to 100. Your response will be consumed by my system and delivered to users.\nONLY return a single integer value representing the score. for example 0 / 85";
+    
+    let response = await LLM.prompt(#Llama3_1_8B, defaultPrompt # " " # prompt);
+    return #ok(response);
+  };
+
+  public func enhanceResumeDescription(description : Text) : async Response<Text> {
+    let defaultPrompt : Text = "You are an AI Career Assistant. Your task is to improve the grammar, clarity, and professionalism of the given resume descriptions while maintaining their original meaning. Ensure the output is well-structured, concise, and professionally written. Keep the response concise and under 1000 characters";
+    
+    let response = await LLM.prompt(#Llama3_1_8B, defaultPrompt # " " # description);
+    return #ok(response);
+  };
+
+  public shared (msg) func profile() : async Response<User> {
+    if (Principal.isAnonymous(msg.caller)) {
+      return #err("Anonymous users are not allowed. Please log in.");
     };
 
-    return fullResponse;
+    switch (userStore.get(msg.caller)) {
+      case (?user) { return #ok(user); };
+      case null { return #err("User profile not found."); };
+    };
   };
-
-
 
   // USER
   public shared (msg) func login() : async Response<User> {
@@ -253,20 +273,20 @@ actor HireX {
       case (?user) { return #ok(user) };
       case null {
         let new_user : User = {
-          full_name = null;
-          date_of_birth = null;
-          years_of_experience = null;
-          education_level = null;
-          personality_traits = null;
-          learning_style = null;
-          job_roles = null;
-          job_search_status = null;
-          job_level = null;
-          work_mode = null;
-          company_size = null;
-          industries_of_interest = null;
-          expected_location = null;
-          is_registered = ?0;
+          fullName = null;
+          dateOfBirth = null;
+          yearsOfExperience = null;
+          educationLevel = null;
+          personalityTraits = null;
+          learningStyle = null;
+          jobRoles = null;
+          jobSearchStatus = null;
+          jobLevel = null;
+          workMode = null;
+          companySize = null;
+          industriesOfInterest = null;
+          expectedLocation = null;
+          isRegistered = ?0;
         };
         userStore.put(msg.caller, new_user);
         return #ok(new_user);
@@ -274,42 +294,46 @@ actor HireX {
     };
   };
 
+  type RegisterParams = {
+    fullName : ?Text;
+    dateOfBirth : ?Nat;
+    yearsOfExperience : ?Text;
+    educationLevel : ?Text;
+    personalityTraits : ?[Text];
+    learningStyle : ?Text;
+    jobRoles : ?[Text];
+    jobSearchStatus : ?Text;
+    jobLevel : ?Text;
+    workMode : ?Text;
+    companySize : ?Text;
+    industriesOfInterest : ?[Text];
+    expectedLocation : ?Text;
+    isRegistered : ?Nat8;
+  };
   public shared (msg) func register(
-    full_name : ?Text,
-    date_of_birth : ?Nat,
-    years_of_experience : ?Text,
-    education_level : ?Text,
-    personality_traits : ?[Text],
-    learning_style : ?Text,
-    job_roles : ?[Text],
-    job_search_status : ?Text,
-    job_level : ?Text,
-    work_mode : ?Text,
-    company_size : ?Text,
-    industries_of_interest : ?[Text],
-    expected_location : ?Text,
-    is_registered : ?Nat8,
+    params : RegisterParams
   ) : async Response<Text> {
     // if (Principal.isAnonymous(msg.caller)) {
     //   return #err("Anonymous users are not allowed.");
     // };
 
     let updated_profile : User = {
-      full_name = full_name;
-      date_of_birth = date_of_birth;
-      years_of_experience = years_of_experience;
-      education_level = education_level;
-      personality_traits = personality_traits;
-      learning_style = learning_style;
-      job_roles = job_roles;
-      job_search_status = job_search_status;
-      job_level = job_level;
-      work_mode = work_mode;
-      company_size = company_size;
-      industries_of_interest = industries_of_interest;
-      expected_location = expected_location;
-      is_registered = is_registered;
+      fullName = params.fullName;
+      dateOfBirth = params.dateOfBirth;
+      yearsOfExperience = params.yearsOfExperience;
+      educationLevel = params.educationLevel;
+      personalityTraits = params.personalityTraits;
+      learningStyle = params.learningStyle;
+      jobRoles = params.jobRoles;
+      jobSearchStatus = params.jobSearchStatus;
+      jobLevel = params.jobLevel;
+      workMode = params.workMode;
+      companySize = params.companySize;
+      industriesOfInterest = params.industriesOfInterest;
+      expectedLocation = params.expectedLocation;
+      isRegistered = params.isRegistered;
     };
+    
     userStore.put(msg.caller, updated_profile);
     return #ok("User registered successfully.");
   };
@@ -372,9 +396,74 @@ actor HireX {
     return msg.caller;
   };
 
+  public func sayhello() : async Text {
+    return "Hello World";
+  };
+
+  public query func transform({
+    context : Blob;
+    response : IC.http_request_result;
+  }) : async IC.http_request_result {
+    {
+      response with headers = []; // not intersted in the headers
+    };
+  };
+
+  type jobsRecommendationParams = {
+    search : Text;
+  };
+  public shared (msg) func jobsRecommendation(params : jobsRecommendationParams) : async Response<Text> {
+      switch (userStore.get(msg.caller)) {
+          case (null) {
+              return #err("User not registered");
+          };
+          case (?user) {
+              let location = Option.get(user.expectedLocation, "");
+              let jobLevel = Option.get(user.jobLevel, "");
+              let workMode = Option.get(user.workMode, "");
+              let educationLevel = Option.get(user.educationLevel, "");
+              let yearsOfExperience = Option.get(user.yearsOfExperience, "");
+
+              let url = "https://jobpilot.jabarkoperasi.com/jobs-recommendation?job_roles=" # params.search # 
+                        "&location=" # location # 
+                        "&job_level=" # jobLevel # 
+                        "&work_mode=" # workMode # 
+                        "&education_level=" # educationLevel # 
+                        "&years_of_experience=" # yearsOfExperience;
+
+              let http_request : IC.http_request_args = {
+                  url = url;
+                  method = #get;
+                  max_response_bytes = null;
+                  headers = [
+                      { name = "User-Agent"; value = "jobpilot" },
+                      { name = "Content-Type"; value = "application/json" },
+                  ];
+                  body = null;
+                  transform = ?{
+                      function = transform;
+                      context = Blob.fromArray([]);
+                  };
+              };
+
+              Cycles.add<system>(230_949_972_000);
+
+              let http_response : IC.http_request_result = await IC.http_request(http_request);
+
+              let decoded_text : Text = switch (Text.decodeUtf8(http_response.body)) {
+                  case (null) { "No value returned" };
+                  case (?y) { y };
+              };
+
+              return #ok(decoded_text);
+          };
+      };
+  };
+
   // AI
-  public func prompt(prompt : Text) : async Text {
+  public func prompt(prompt : Text) : async Response<Text> {
     let command = "You are an AI career assistant. Only respond to questions about career, CV making, job recommendations, or related courses. If the question is unrelated, say: 'Sorry, I can only assist with career-related topics.' Keep the response concise and under 1000 characters.";
-    await LLM.prompt(#Llama3_1_8B, command # " " # prompt);
+    let response = await LLM.prompt(#Llama3_1_8B, command # " " # prompt);
+    return #ok(response);
   };
 };

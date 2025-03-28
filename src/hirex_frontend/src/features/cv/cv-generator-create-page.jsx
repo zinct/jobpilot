@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowLeft, Eye, Download, Sparkles, AlertTriangle, BarChart, CheckCircle, Loader2, SaveIcon, RssIcon } from "lucide-react";
+import { ArrowLeft, Eye, Download, Sparkles, BarChart, Loader2, SaveIcon, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/core/components/ui/button";
 import { CVEditor } from "@/core/components/cv-generator/cv-editor";
@@ -16,7 +16,28 @@ import { extractOptValue } from "@/core/utils/canisterUtils";
 import { hirex_backend } from "declarations/hirex_backend";
 import { defaultCVData } from "../../core/components/cv-generator/default-data";
 import { useCV } from "../../core/components/cv-generator/cv-context";
-import { optValue } from "../../core/utils/canisterUtils";
+import { jsonStringify, optValue } from "../../core/utils/canisterUtils";
+import { useErrorAlert } from "../../core/components/error-alert";
+
+const getScoreColor = (score) => {
+  if (score < 50) return "text-red-500";
+  if (score < 80) return "text-yellow-500";
+  return "text-green-500";
+};
+
+const getStrokeColor = (score) => {
+  if (score < 50) return "#ef4444";
+  if (score < 80) return "#eab308";
+  return "#22c55e";
+};
+
+const radius = 40;
+const circumference = 2 * Math.PI * radius;
+
+// Calculate the dashoffset based on the score
+const calculateDashoffset = (score) => {
+  return circumference * (1 - score / 100);
+};
 
 export default function CVGeneratorCreatepage() {
   const { id } = useParams();
@@ -34,49 +55,91 @@ export default function CVGeneratorCreatepage() {
 
   const [defaultResumeData, setDefaultResumeData] = useState(null);
 
-  // Add these new state variables after the existing state declarations
+  // Resume Analysis
   const [isAnalyzed, setIsAnalyzed] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisData, setAnalysisData] = useState([]);
+  const [resumeScore, setResumeScore] = useState(null);
+  const [isReanalyzing, setIsReanalyzing] = useState(false);
+  const { showError } = useErrorAlert();
+  const cvPreviewRef = useRef(null);
 
   // Add this function before the return statement
-  const handleAnalyzeResume = () => {
-    setIsAnalyzing(true);
+  const handleAnalyzeResume = async () => {
+    try {
+      Actor.agentOf(hirex_backend).replaceIdentity(identity);
 
-    // Simulate analysis process with a timeout
-    setTimeout(() => {
-      setIsAnalyzing(false);
+      if (isAnalyzed) {
+        setIsReanalyzing(true);
+      } else {
+        setIsAnalyzing(true);
+      }
+
+      const retryRequest = async (fn, retries = 3) => {
+        for (let i = 0; i < retries; i++) {
+          try {
+            const response = await fn();
+            return JSON.parse(response.ok); // Parsing di sini
+          } catch (error) {
+            console.error(`Error in attempt ${i + 1}:`, error);
+            if (i === retries - 1) throw error; // Jika sudah mencoba 3x, lempar error
+          }
+        }
+      };
+
+      const [analysisDataResponse, resumeScoreResponse] = await Promise.all([
+        retryRequest(() => hirex_backend.analyzeResumeJSON(jsonStringify(defaultResumeData))),
+        retryRequest(async () => {
+          const response = await hirex_backend.resumeScore(jsonStringify(defaultResumeData));
+          return { ok: response.ok };
+        }),
+      ]);
+
+      if (isAnalyzed) {
+        setIsReanalyzing(false);
+      } else {
+        setIsAnalyzing(false);
+      }
+
+      setAnalysisData([...analysisDataResponse]);
+      setResumeScore(Number(resumeScoreResponse));
+
       setIsAnalyzed(true);
-    }, 3000); // 3 seconds for demonstration
+    } catch (err) {
+      showError(err);
+    }
   };
 
-  const cvPreviewRef = useRef(null);
+  function handleResumeDataChange(newResumeData) {
+    setDefaultResumeData(newResumeData);
+  }
+
+  async function fetchResume() {
+    Actor.agentOf(hirex_backend).replaceIdentity(identity);
+    const response = await hirex_backend.resume({ resumeId: Number(id) });
+    setIsLoading(false);
+    if ("ok" in response) {
+      try {
+        setDefaultResumeData({
+          personalInfo: extractOptValue(response.ok.personalInfo) ?? formData.personalInfo,
+          experience: extractOptValue(response.ok.experience) ?? [],
+          education: extractOptValue(response.ok.education) ?? [],
+          certifications: extractOptValue(response.ok.certifications) ?? [],
+          projects: extractOptValue(response.ok.projects) ?? [],
+          skills: extractOptValue(response.ok.skills) ?? [],
+          languages: extractOptValue(response.ok.languages) ?? [],
+        });
+      } catch (err) {
+        setDefaultResumeData(defaultCVData);
+      }
+    } else {
+      console.log("err", response.err);
+      navigate("/dashboard");
+    }
+  }
 
   useEffect(() => {
     if (!identity) return;
-
-    async function fetchResume() {
-      Actor.agentOf(hirex_backend).replaceIdentity(identity);
-      const response = await hirex_backend.resume({ resumeId: Number(id) });
-      setIsLoading(false);
-      if ("ok" in response) {
-        try {
-          setDefaultResumeData({
-            personalInfo: extractOptValue(response.ok.personalInfo) ?? formData.personalInfo,
-            experience: extractOptValue(response.ok.experience) ?? [],
-            education: extractOptValue(response.ok.education) ?? [],
-            certifications: extractOptValue(response.ok.certifications) ?? [],
-            projects: extractOptValue(response.ok.projects) ?? [],
-            skills: extractOptValue(response.ok.skills) ?? [],
-            languages: extractOptValue(response.ok.languages) ?? [],
-          });
-        } catch (err) {
-          setDefaultResumeData(defaultCVData);
-        }
-      } else {
-        console.log("err", response.err);
-        navigate("/dashboard");
-      }
-    }
 
     fetchResume();
   }, [identity]);
@@ -89,8 +152,8 @@ export default function CVGeneratorCreatepage() {
     <LoadingOverlay isLoading={isLoading || isAuthLoading} message={"Creating your CV..."} />
   ) : (
     <div className="min-h-screen w-full bg-black text-white px-10">
-      <CVProvider initialData={defaultResumeData}>
-        <CVGeneratorHeader setActiveTab={setActiveTab} activeTab={activeTab} cvPreviewRef={cvPreviewRef} />
+      <CVProvider initialData={defaultResumeData} onDataChange={handleResumeDataChange}>
+        <CVGeneratorHeader setActiveTab={setActiveTab} activeTab={activeTab} cvPreviewRef={cvPreviewRef} resumeScore={resumeScore} />
         <div className="min-h-screen">
           {/* Main Content */}
           <div className="space-y-6">
@@ -130,186 +193,65 @@ export default function CVGeneratorCreatepage() {
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
                           <div className="flex items-center gap-6">
                             <div className="relative h-24 w-24">
-                              <svg className="h-24 w-24 -rotate-90 transform">
-                                <circle cx="48" cy="48" r="40" fill="none" stroke="#1f2937" strokeWidth="8" />
-                                <circle cx="48" cy="48" r="40" fill="none" stroke="#22c55e" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="40.2" strokeLinecap="round" />
-                              </svg>
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="text-2xl font-bold">84%</span>
-                              </div>
+                              {isReanalyzing ? (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <Loader2 className="h-12 w-12 animate-spin text-cyan-400" />
+                                </div>
+                              ) : (
+                                <>
+                                  <svg className="h-24 w-24 -rotate-90 transform">
+                                    <circle cx="48" cy="48" r="40" fill="none" stroke="#1f2937" strokeWidth="8" />
+                                    <circle cx="48" cy="48" r="40" fill="none" stroke={getStrokeColor(resumeScore)} strokeWidth="8" strokeDasharray="251.2" strokeDashoffset={calculateDashoffset(resumeScore)} strokeLinecap="round" />
+                                  </svg>
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <span className={`text-2xl font-bold ${getScoreColor(resumeScore)}`}>{resumeScore}%</span>
+                                  </div>
+                                </>
+                              )}
                             </div>
                             <div>
                               <h2 className="text-xl font-semibold">Resume Analysis</h2>
                               <p className="mt-2 text-gray-400">Aim for a higher score for an optimized resume which follows best practices.</p>
                             </div>
+                            <Button className="border-white/10 text-white hover:bg-white/10" onClick={handleAnalyzeResume} disabled={isReanalyzing}>
+                              {isReanalyzing ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Reanalyzing...
+                                </>
+                              ) : (
+                                <>
+                                  <RefreshCw className="mr-2 h-4 w-4" />
+                                  Reanalyze
+                                </>
+                              )}
+                            </Button>
                           </div>
                         </motion.div>
 
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-                          <h3 className="mb-6 text-lg font-medium">PENGALAMAN KERJA</h3>
-
                           <div className="mb-4 flex border-b border-white/10 pb-2">
                             <button onClick={() => setActiveAnalysisTab("analysis")} className={`px-4 py-2 text-sm font-medium ${activeAnalysisTab === "analysis" ? "border-b-2 border-cyan-400 text-white" : "text-gray-400 hover:text-white"}`}>
                               Analysis
-                              <span className="ml-2 rounded-full bg-red-400/10 px-2 py-0.5 text-xs text-red-400">{3 - resolvedIssues.length}</span>
-                            </button>
-                            <button onClick={() => setActiveAnalysisTab("guidance")} className={`px-4 py-2 text-sm font-medium ${activeAnalysisTab === "guidance" ? "border-b-2 border-cyan-400 text-white" : "text-gray-400 hover:text-white"}`}>
-                              Guidance
+                              <span className="ml-2 rounded-full bg-red-400/10 px-2 py-0.5 text-xs text-red-400">{analysisData.length - resolvedIssues.length}</span>
                             </button>
                           </div>
 
                           {activeAnalysisTab === "analysis" && (
                             <div className="space-y-4">
-                              {!resolvedIssues.includes("issue1") && (
-                                <div className="rounded-lg border border-orange-400/20 bg-orange-950/20 p-4">
-                                  <div className="flex items-start justify-between">
-                                    <div className="flex gap-3">
-                                      <div className="mt-1 rounded-full bg-orange-400/20 p-1">
-                                        <AlertTriangle className="h-4 w-4 text-orange-400" />
-                                      </div>
-                                      <div>
-                                        <h5 className="font-medium">Bullet Points Missing in Backend Developer Lead | Kontrak at Bawaslu RI</h5>
-                                        <p className="mt-1 text-sm text-gray-400">Bullet points are a great way to split lengthy information into more manageable sections, making it easier to read and understand.</p>
-                                      </div>
-                                    </div>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      className="border-orange-400/30 text-orange-400 hover:bg-orange-400/10"
-                                      onClick={() => {
-                                        setResolvedIssues([...resolvedIssues, "issue1"]);
-                                        setActiveTab("preview");
-                                      }}
-                                    >
-                                      Resolve
-                                    </Button>
-                                  </div>
-                                </div>
-                              )}
-
-                              {!resolvedIssues.includes("issue2") && (
-                                <div className="rounded-lg border border-red-400/20 bg-red-950/20 p-4">
-                                  <div className="flex items-start justify-between">
-                                    <div className="flex gap-3">
-                                      <div className="mt-1 rounded-full bg-red-400/20 p-1">
-                                        <AlertTriangle className="h-4 w-4 text-red-400" />
-                                      </div>
-                                      <div>
-                                        <h5 className="font-medium">Company Location Missing in Flutter Developer at PT Milenial Elite Teknologi (Me-tech.id)</h5>
-                                        <p className="mt-1 text-sm text-gray-400">Company Location gives context and helps recruiters to understand the location of your current and previous work experiences.</p>
-                                      </div>
-                                    </div>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      className="border-red-400/30 text-red-400 hover:bg-red-400/10"
-                                      onClick={() => {
-                                        setResolvedIssues([...resolvedIssues, "issue2"]);
-                                        setActiveTab("preview");
-                                      }}
-                                    >
-                                      Resolve
-                                    </Button>
-                                  </div>
-                                </div>
-                              )}
-
-                              {!resolvedIssues.includes("issue3") && (
-                                <div className="rounded-lg border border-red-400/20 bg-red-950/20 p-4">
-                                  <div className="flex items-start justify-between">
-                                    <div className="flex gap-3">
-                                      <div className="mt-1 rounded-full bg-red-400/20 p-1">
-                                        <AlertTriangle className="h-4 w-4 text-red-400" />
-                                      </div>
-                                      <div>
-                                        <h5 className="font-medium">Company Location Missing in Mobile Developer Intern at Motion Innovation Laboratory</h5>
-                                        <p className="mt-1 text-sm text-gray-400">Company Location gives context and helps recruiters to understand the location of your current and previous work experiences.</p>
-                                      </div>
-                                    </div>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      className="border-red-400/30 text-red-400 hover:bg-red-400/10"
-                                      onClick={() => {
-                                        setResolvedIssues([...resolvedIssues, "issue3"]);
-                                      }}
-                                    >
-                                      Resolve
-                                    </Button>
-                                  </div>
-                                </div>
-                              )}
-
-                              {resolvedIssues.length > 0 && resolvedIssues.length < 3 && (
-                                <div className="rounded-lg border border-green-400/20 bg-green-950/20 p-4">
+                              {analysisData.map((row, index) => (
+                                <div className="rounded-lg border border-cyan-400/20 bg-cyan-950/20 p-4" key={index}>
                                   <div className="flex items-start gap-3">
-                                    <div className="mt-1 rounded-full bg-green-400/20 p-1">
-                                      <CheckCircle className="h-4 w-4 text-green-400" />
+                                    <div className="mt-1 rounded-full bg-cyan-400/20 p-1">
+                                      <Sparkles className="h-4 w-4 text-cyan-400" />
                                     </div>
                                     <div>
-                                      <h5 className="font-medium">
-                                        {resolvedIssues.length} issue
-                                        {resolvedIssues.length > 1 ? "s" : ""} resolved
-                                      </h5>
-                                      <p className="mt-1 text-sm text-gray-400">Great job! You've improved your resume. Keep going to resolve all issues.</p>
+                                      <h5 className="font-medium">{row.title}</h5>
+                                      <p className="mt-1 text-sm text-gray-400">{row.description}</p>
                                     </div>
                                   </div>
                                 </div>
-                              )}
-
-                              {resolvedIssues.length === 3 && (
-                                <div className="rounded-lg border border-green-400/20 bg-green-950/20 p-4">
-                                  <div className="flex items-start gap-3">
-                                    <div className="mt-1 rounded-full bg-green-400/20 p-1">
-                                      <CheckCircle className="h-4 w-4 text-green-400" />
-                                    </div>
-                                    <div>
-                                      <h5 className="font-medium">All issues resolved!</h5>
-                                      <p className="mt-1 text-sm text-gray-400">Congratulations! Your resume is now optimized and ready to be downloaded.</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {activeAnalysisTab === "guidance" && (
-                            <div className="space-y-4">
-                              <div className="rounded-lg border border-cyan-400/20 bg-cyan-950/20 p-4">
-                                <div className="flex items-start gap-3">
-                                  <div className="mt-1 rounded-full bg-cyan-400/20 p-1">
-                                    <Sparkles className="h-4 w-4 text-cyan-400" />
-                                  </div>
-                                  <div>
-                                    <h5 className="font-medium">Use Action Verbs</h5>
-                                    <p className="mt-1 text-sm text-gray-400">Start your bullet points with strong action verbs like "Developed," "Implemented," or "Led" to make your achievements more impactful.</p>
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="rounded-lg border border-cyan-400/20 bg-cyan-950/20 p-4">
-                                <div className="flex items-start gap-3">
-                                  <div className="mt-1 rounded-full bg-cyan-400/20 p-1">
-                                    <Sparkles className="h-4 w-4 text-cyan-400" />
-                                  </div>
-                                  <div>
-                                    <h5 className="font-medium">Quantify Achievements</h5>
-                                    <p className="mt-1 text-sm text-gray-400">Include numbers and percentages to quantify your achievements. For example, "Increased website performance by 40%" is more impactful than "Improved website performance."</p>
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="rounded-lg border border-cyan-400/20 bg-cyan-950/20 p-4">
-                                <div className="flex items-start gap-3">
-                                  <div className="mt-1 rounded-full bg-cyan-400/20 p-1">
-                                    <Sparkles className="h-4 w-4 text-cyan-400" />
-                                  </div>
-                                  <div>
-                                    <h5 className="font-medium">Tailor to Job Description</h5>
-                                    <p className="mt-1 text-sm text-gray-400">Customize your resume for each job application by highlighting relevant skills and experiences that match the job description.</p>
-                                  </div>
-                                </div>
-                              </div>
+                              ))}
                             </div>
                           )}
                         </motion.div>
@@ -331,8 +273,9 @@ export default function CVGeneratorCreatepage() {
   );
 }
 
-export function CVGeneratorHeader({ setActiveTab, activeTab, cvPreviewRef }) {
+export function CVGeneratorHeader({ setActiveTab, activeTab, cvPreviewRef, resumeScore }) {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { cvData } = useCV();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -421,16 +364,6 @@ export function CVGeneratorHeader({ setActiveTab, activeTab, cvPreviewRef }) {
     setIsSaving(true);
     Actor.agentOf(hirex_backend).replaceIdentity(identity);
 
-    console.log({
-      resumeId: Number(id),
-      personalInfo: optValue(cvData.personalInfo),
-      experience: optValue(cvData.experience),
-      projects: optValue(cvData.projects),
-      certifications: optValue(cvData.certifications),
-      education: optValue(cvData.education),
-      languages: optValue(cvData.languages),
-      skills: optValue(cvData.skills),
-    });
     const response = await hirex_backend.updateResume({
       resumeId: Number(id),
       personalInfo: optValue(cvData.personalInfo),
@@ -506,7 +439,7 @@ export function CVGeneratorHeader({ setActiveTab, activeTab, cvPreviewRef }) {
         <button onClick={() => setActiveTab("analysis")} className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${activeTab === "analysis" ? "border-cyan-400 text-cyan-400" : "border-transparent text-gray-400 hover:border-gray-700 hover:text-white"}`}>
           <BarChart className="h-4 w-4" />
           Resume Analysis
-          <span className="ml-2 rounded bg-green-600/20 px-2 py-0.5 text-xs font-medium text-green-400">84%</span>
+          {resumeScore ? <span className={`ml-2 rounded bg-green-600/20 px-2 py-0.5 text-xs font-medium ${getScoreColor(resumeScore)}`}>{resumeScore}%</span> : <></>}
         </button>
       </div>
     </header>

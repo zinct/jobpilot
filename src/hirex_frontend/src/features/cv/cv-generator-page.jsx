@@ -9,35 +9,79 @@ import { LoadingOverlay } from "../../core/components/loading-overlay";
 import { useAuth } from "../../core/providers/auth-provider";
 import { hirex_backend } from "../../../../declarations/hirex_backend";
 import { Actor } from "@dfinity/agent";
-import { formatTimestamp } from "../../core/utils/canisterUtils";
+import { EmptyState } from "../../core/components/ui/empty-state";
+import { useErrorAlert } from "../../core/components/error-alert";
+
+const ResumeSkeletonLoader = () => {
+  return (
+    <div className="flex flex-col justify-between gap-3 rounded-lg border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-center">
+      <div className="w-full">
+        <div className="h-5 w-48 rounded-md bg-white/10 animate-pulse mb-2"></div>
+        <div className="h-4 w-36 rounded-md bg-white/10 animate-pulse"></div>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <div className="h-8 w-16 rounded-md bg-white/10 animate-pulse"></div>
+        <div className="h-8 w-24 rounded-md bg-white/10 animate-pulse"></div>
+      </div>
+    </div>
+  );
+};
 
 export default function CVGeneratorPage() {
   const navigate = useNavigate();
   const { identity, isLoading: isAuthLoading, user } = useAuth();
+  const { showError } = useErrorAlert();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [resumes, setResumes] = useState([]);
 
   async function handleCreate() {
-    Actor.agentOf(hirex_backend).replaceIdentity(identity);
+    try {
+      Actor.agentOf(hirex_backend).replaceIdentity(identity);
 
-    setIsLoading(true);
-    const response = await hirex_backend.createResume();
-    setIsLoading(false);
+      setIsCreating(true);
+      const response = await hirex_backend.createResume();
+      setIsCreating(false);
 
-    if ("ok" in response) {
-      const id = Number(response.ok);
-      navigate("/dashboard/cv-generator/builder/" + id);
-    } else {
-      console.log("err", response.err);
+      if ("ok" in response) {
+        const id = Number(response.ok);
+        navigate("/dashboard/cv-generator/builder/" + id);
+      } else {
+        throw Error(response.err);
+      }
+    } catch (err) {
+      showError(err);
     }
   }
 
-  useEffect(() => {
-    console.log("identity", identity);
-    if (!identity) return;
+  function timeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
 
-    async function fetchResume() {
+    const intervals = {
+      year: 31536000,
+      month: 2592000,
+      week: 604800,
+      day: 86400,
+      hour: 3600,
+      minute: 60,
+      second: 1,
+    };
+
+    for (const [unit, value] of Object.entries(intervals)) {
+      const count = Math.floor(seconds / value);
+      if (count >= 1) {
+        return `Edited ${count} ${unit}${count > 1 ? "s" : ""} ago`;
+      }
+    }
+
+    return "Edited just now";
+  }
+
+  async function fetchResume() {
+    try {
       setIsLoading(true);
       Actor.agentOf(hirex_backend).replaceIdentity(identity);
       const response = await hirex_backend.resumes();
@@ -45,21 +89,27 @@ export default function CVGeneratorPage() {
       if ("ok" in response) {
         setResumes(
           response.ok.map((row) => {
-            const label = row.personalInfo[0]?.title[0] ? row.personalInfo[0]?.title[0] : user.full_name[0];
-            return { id: row.id, label: "Resume: " + label, date: formatTimestamp(row.updatedAt) };
+            const label = row.personalInfo[0]?.title[0] ? row.personalInfo[0]?.title[0] : user.fullName[0];
+            return { id: row.id, label: "Resume: " + label, date: timeAgo(Date(row.updatedAt)) };
           })
         );
       } else {
-        console.log("Err", response.err);
+        throw Error(response.err);
       }
+    } catch (err) {
+      showError(err);
     }
+  }
+
+  useEffect(() => {
+    if (!identity) return;
 
     fetchResume();
   }, [identity]);
 
   return (
     <div className="space-y-6">
-      <LoadingOverlay isLoading={isLoading || isAuthLoading} message={"Please wait, your application is being processed..."} />
+      <LoadingOverlay isLoading={isAuthLoading || isCreating} message={"Please wait, your application is being processed..."} />
 
       <div className="mb-2">
         <p className="text-gray-400">Create and optimize your professional resume with AI.</p>
@@ -83,25 +133,31 @@ export default function CVGeneratorPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm md:col-span-2">
           <h3 className="mb-4 text-lg font-medium">Your Resumes</h3>
           <div className="space-y-4">
-            {resumes.map((row) => (
-              <div key={row.id} className="flex flex-col justify-between gap-3 rounded-lg border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-center">
-                <div>
-                  <h4 className="font-medium">{row.label}</h4>
-                  <p className="text-sm text-gray-400">{row.date}</p>
+            {isLoading ? (
+              [...Array(2)].map((_, index) => <ResumeSkeletonLoader key={index} />)
+            ) : resumes.length === 0 ? (
+              <EmptyState title="No resumes found" description="We couldn't find any resumes. Try create a new one." icon="search" />
+            ) : (
+              resumes.map((row) => (
+                <div key={row.id} className="flex flex-col justify-between gap-3 rounded-lg border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-center">
+                  <div>
+                    <h4 className="font-medium">{row.label}</h4>
+                    <p className="text-sm text-gray-400">{row.date}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      size="sm"
+                      className="border-white/10 hover:bg-white/10"
+                      onClick={() => {
+                        navigate("/dashboard/cv-generator/create/" + row.id);
+                      }}
+                    >
+                      Detail
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    size="sm"
-                    className="border-white/10 hover:bg-white/10"
-                    onClick={() => {
-                      navigate("/dashboard/cv-generator/create/" + row.id);
-                    }}
-                  >
-                    Detail
-                  </Button>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </motion.div>
 

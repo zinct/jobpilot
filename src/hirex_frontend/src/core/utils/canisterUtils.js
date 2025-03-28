@@ -9,34 +9,24 @@ export function getInternetIdentityNetwork() {
 
   if (network === "local") {
     return `http://${canisterId}.localhost:4943`;
-  } else if (network === "playground") {
-    return `https://${canisterId}.dfinity.network`;
   } else {
     return `https://identity.ic0.app`;
   }
 }
 
-export function formatTimestamp(initialTimestamp) {
-  let timestamp = initialTimestamp;
-  if (typeof initialTimestamp === "bigint") {
-    timestamp = Number(initialTimestamp);
-  }
+export function jsonStringify(data) {
+  return JSON.stringify(data, (_, v) => (typeof v === "bigint" ? v.toString() : v));
+}
 
+export function formatTimestamp(initialTimestamp, label = "Last updated: ") {
+  let timestamp = typeof initialTimestamp === "bigint" ? Number(initialTimestamp) : initialTimestamp;
   const now = Date.now();
-  const inputTime = timestamp / 1_000_000;
-  const diff = Math.floor((now - inputTime) / 1000);
+  const inputTime = timestamp / 1_000; // Ubah ke millisecond
+  const diff = Math.floor((now - inputTime) / 1000); // Konversi ke detik
 
-  if (diff < 60) {
-    return `Last updated: ${diff} Seconds ago`;
-  } else if (diff < 3600) {
-    return `Last updated: ${Math.floor(diff / 60)} Minutes ago`;
-  } else if (diff < 86400) {
-    return `Last updated: Yesterday`;
-  } else if (diff < 604800) {
-    return `Last updated: ${Math.floor(diff / 86400)} Days ago`;
-  } else {
-    return `Last updated: ${Math.floor(diff / 604800)} Weeks ago`;
-  }
+  let timeString = diff < 60 ? `${diff} Seconds ago` : diff < 3600 ? `${Math.floor(diff / 60)} Minutes ago` : diff < 86400 ? `Yesterday` : diff < 604800 ? `${Math.floor(diff / 86400)} Days ago` : `${Math.floor(diff / 604800)} Weeks ago`;
+
+  return label + timeString;
 }
 
 export function mapOptionalToFormattedJSON(data) {

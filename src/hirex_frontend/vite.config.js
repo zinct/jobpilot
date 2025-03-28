@@ -6,13 +6,11 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: "../../.env" });
 
-// https://vite.dev/config/
+const isLocal = process.env.DFX_NETWORK === "local";
+const proxyTarget = isLocal ? "http://127.0.0.1:4943" : "https://icp0.io";
+
 export default defineConfig({
-  plugins: [
-    react(),
-    EnvironmentPlugin("all", { prefix: "CANISTER_" }),
-    EnvironmentPlugin("all", { prefix: "DFX_" }),
-  ],
+  plugins: [react(), EnvironmentPlugin("all", { prefix: "CANISTER_" }), EnvironmentPlugin("all", { prefix: "DFX_" })],
   optimizeDeps: {
     esbuildOptions: {
       define: {
@@ -23,7 +21,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://127.0.0.1:4943",
+        target: proxyTarget,
         changeOrigin: true,
       },
     },

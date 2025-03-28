@@ -3,7 +3,9 @@ import { AuthClient } from "@dfinity/auth-client";
 import { Actor } from "@dfinity/agent";
 import { useNavigate } from "react-router";
 import { getInternetIdentityNetwork } from "@/core/utils/canisterUtils";
-import { hirex_backend } from "../../../../declarations/hirex_backend";
+import { hirex_backend } from "declarations/hirex_backend";
+import { mapOptionalToFormattedJSON } from "../utils/canisterUtils";
+import { useErrorAlert } from "../components/error-alert";
 
 const AuthContext = createContext();
 
@@ -14,6 +16,7 @@ export const AuthProvider = ({ children }) => {
   const [identity, setIdentity] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const { showError } = useErrorAlert();
 
   useEffect(() => {
     const initAuth = async () => {
@@ -27,27 +30,32 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const updateIdentity = async (client) => {
-    const authenticated = await client.isAuthenticated();
+    try {
+      const authenticated = await client.isAuthenticated();
+      setIsAuthenticated(authenticated);
+      if (authenticated) {
+        const newIdentity = client.getIdentity();
+        setIdentity(newIdentity);
+        Actor.agentOf(hirex_backend).replaceIdentity(newIdentity);
+        const userResponse = await hirex_backend.login();
 
-    setIsAuthenticated(authenticated);
-    if (authenticated) {
-      const newIdentity = client.getIdentity();
-      setIdentity(newIdentity);
-      Actor.agentOf(hirex_backend).replaceIdentity(newIdentity);
-      const userResponse = await hirex_backend.login();
-      setIsLoading(false);
+        setIsLoading(false);
 
-      if ("ok" in userResponse) {
-        setUser(userResponse.ok);
+        if ("ok" in userResponse) {
+          setUser(mapOptionalToFormattedJSON(userResponse.ok));
 
-        if (userResponse.ok.is_registered[0] === 0) {
-          navigate("/register");
+          if (userResponse.ok.isRegistered[0] === 0) {
+            navigate("/register");
+          }
+        } else if ("err" in userResponse) {
+          console.log("Error:", userResponse.err);
         }
-      } else if ("err" in userResponse) {
-        console.log("Error:", userResponse.err);
+      } else {
+        setIsLoading(false);
+        // navigate("/get-started"); // cek dulu
       }
-    } else {
-      setIsLoading(false);
+    } catch (err) {
+      showError(err);
     }
   };
 
@@ -67,7 +75,6 @@ export const AuthProvider = ({ children }) => {
     await authClient.logout();
     setUser(null);
     setIsAuthenticated(false);
-    window.localStorage.removeItem("identity");
     navigate("/get-started");
   };
 
