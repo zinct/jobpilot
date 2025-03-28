@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, BrainCircuit, BookOpen, MessageSquare, FileText, Wallet, FileIcon as FileSparkles, FileSearch, Check, RefreshCw } from "lucide-react";
 import { Button } from "@/core/components/ui/button";
 
 import React, { useEffect, useState } from "react";
@@ -47,7 +46,6 @@ const HomePage = ({ navigate }) => {
         <header className="fixed top-0 z-50 w-full border-b border-white/10 bg-black/50 backdrop-blur-xl">
           <div className="container flex h-16 items-center justify-between px-4">
             <a className="flex items-center space-x-2 font-bold" href="/">
-              <BrainCircuit className="h-6 w-6 text-cyan-400" />
               <span className="text-xl">JobPilot</span>
             </a>
 
@@ -82,7 +80,7 @@ const HomePage = ({ navigate }) => {
                 </linearGradient>
               </defs>
               {/* Top Curves */}
-              <motion.path
+              <path
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 1 }}
                 transition={{
@@ -97,7 +95,7 @@ const HomePage = ({ navigate }) => {
                 stroke="url(#grad1)"
                 strokeWidth="1"
               />
-              <motion.path
+              <path
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 1 }}
                 transition={{
@@ -114,7 +112,7 @@ const HomePage = ({ navigate }) => {
                 strokeWidth="1"
               />
               {/* Bottom Curves */}
-              <motion.path
+              <path
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 1 }}
                 transition={{
@@ -133,9 +131,9 @@ const HomePage = ({ navigate }) => {
             </svg>
 
             {/* Straight Lines */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="absolute inset-0">
+            <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="absolute inset-0">
               {[...Array(3)].map((_, i) => (
-                <motion.div
+                <div
                   key={i}
                   initial={{ x: "100%", opacity: 0 }}
                   animate={{
@@ -158,19 +156,19 @@ const HomePage = ({ navigate }) => {
                   }}
                 />
               ))}
-            </motion.div>
+            </div>
           </div>
 
           {/* Animated Background */}
           <div className="absolute inset-0 z-[1]">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2 }} className="absolute -left-1/4 top-1/4 h-96 w-96 rounded-full bg-cyan-500/30 blur-3xl" />
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2, delay: 0.5 }} className="absolute -right-1/4 top-1/2 h-96 w-96 rounded-full bg-violet-500/30 blur-3xl" />
+            <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2 }} className="absolute -left-1/4 top-1/4 h-96 w-96 rounded-full bg-cyan-500/30 blur-3xl" />
+            <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2, delay: 0.5 }} className="absolute -right-1/4 top-1/2 h-96 w-96 rounded-full bg-violet-500/30 blur-3xl" />
           </div>
 
           {/* Content */}
           <div className="container relative z-[3] px-4">
             <div className="grid items-center gap-12 lg:grid-cols-2">
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="mx-auto max-w-3xl space-y-8 text-center lg:text-left">
+              <div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="mx-auto max-w-3xl space-y-8 text-center lg:text-left">
                 <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">Decentralize AI-Powered Career Advancement</h1>
                 <p className="mx-auto max-w-2xl text-muted text-gray-400 sm:text-xl lg:mx-0">Our platform leverages AI and blockchain technology to revolutionize how professionals discover opportunities, develop skills, and advance their careers</p>
                 <div className="flex flex-wrap justify-center gap-4 lg:justify-start">
@@ -181,13 +179,12 @@ const HomePage = ({ navigate }) => {
                     className="bg-gradient-to-r from-cyan-400 to-violet-500 text-lg text-black hover:from-cyan-500 hover:to-violet-600"
                   >
                     Get Started
-                    <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </div>
-              </motion.div>
+              </div>
 
               {/* CV Visualization */}
-              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, delay: 0.5 }} className="hidden lg:block">
+              <div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, delay: 0.5 }} className="hidden lg:block">
                 <div className="relative mx-auto max-w-md">
                   {/* CV Document */}
                   <div className="rounded-lg border border-white/20 bg-gradient-to-b from-gray-800/80 to-gray-900/80 p-6 shadow-2xl backdrop-blur-sm">
@@ -197,9 +194,7 @@ const HomePage = ({ navigate }) => {
                         <h3 className="text-xl font-bold text-white">Professional Resume</h3>
                         <p className="text-sm text-cyan-400">AI-Optimized</p>
                       </div>
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400/20">
-                        <BrainCircuit className="h-6 w-6 text-cyan-400" />
-                      </div>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400/20"></div>
                     </div>
 
                     {/* AI Analysis Indicators */}
@@ -220,7 +215,7 @@ const HomePage = ({ navigate }) => {
                           <div className="rounded-md bg-white/5 p-3">
                             <div className="flex justify-between">
                               <p className="font-medium text-white">Senior Developer</p>
-                              <motion.div
+                              <div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: [0, 1, 1, 0] }}
                                 transition={{
@@ -231,7 +226,7 @@ const HomePage = ({ navigate }) => {
                                 className="rounded-sm bg-cyan-400/20 px-2 py-0.5 text-xs text-cyan-400"
                               >
                                 AI Highlighted
-                              </motion.div>
+                              </div>
                             </div>
                             <p className="text-sm text-gray-400">TechCorp Inc. • 2020-Present</p>
                             <p className="mt-1 text-xs text-gray-300">Led development of cloud-based solutions...</p>
@@ -248,7 +243,7 @@ const HomePage = ({ navigate }) => {
                         <h4 className="mb-2 font-medium text-white">Skills</h4>
                         <div className="flex flex-wrap gap-2">
                           {["JavaScript", "React", "Node.js", "Cloud", "AI/ML"].map((skill, index) => (
-                            <motion.span
+                            <span
                               key={index}
                               initial={{ opacity: 0.7 }}
                               animate={{
@@ -262,14 +257,14 @@ const HomePage = ({ navigate }) => {
                               className={`rounded-full px-3 py-1 text-xs ${index === 0 || index === 4 ? "border border-cyan-400/50 bg-cyan-950/30 text-cyan-400" : "bg-white/10 text-gray-300"}`}
                             >
                               {skill}
-                            </motion.span>
+                            </span>
                           ))}
                         </div>
                       </div>
                     </div>
 
                     {/* AI Scanning Effect */}
-                    <motion.div
+                    <div
                       initial={{ top: 0 }}
                       animate={{ top: "100%" }}
                       transition={{
@@ -284,20 +279,20 @@ const HomePage = ({ navigate }) => {
                   </div>
 
                   {/* AI Analysis Floating Elements */}
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 1 }} className="absolute -right-10 -top-10 rounded-lg border border-white/10 bg-black/60 p-3 backdrop-blur-sm">
+                  <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 1 }} className="absolute -right-10 -top-10 rounded-lg border border-white/10 bg-black/60 p-3 backdrop-blur-sm">
                     <div className="flex items-center space-x-2">
                       <div className="h-2 w-2 rounded-full bg-cyan-400"></div>
                       <p className="text-xs text-white">Analyzing skills</p>
                     </div>
-                  </motion.div>
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 1 }} className="absolute -bottom-5 -left-5 rounded-lg border border-white/10 bg-black/60 p-3 backdrop-blur-sm">
+                  </div>
+                  <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 1 }} className="absolute -bottom-5 -left-5 rounded-lg border border-white/10 bg-black/60 p-3 backdrop-blur-sm">
                     <div className="flex items-center space-x-2">
                       <div className="h-2 w-2 rounded-full bg-violet-400"></div>
                       <p className="text-xs text-white">Job matching</p>
                     </div>
-                  </motion.div>
+                  </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
@@ -310,26 +305,22 @@ const HomePage = ({ navigate }) => {
               <p className="mt-4 text-gray-400">Experience career development that works for you</p>
             </div>
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-cyan-400/50">
-                <BrainCircuit className="mb-4 h-12 w-12 text-cyan-400" />
+              <div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-cyan-400/50">
                 <h3 className="mb-2 text-xl font-bold">AI Job Matching</h3>
                 <p className="text-gray-400">Smart job recommendations personalized to your profile, skills, and career preferences.</p>
-              </motion.div>
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-violet-400/50">
-                <BookOpen className="mb-4 h-12 w-12 text-violet-400" />
+              </div>
+              <div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-violet-400/50">
                 <h3 className="mb-2 text-xl font-bold">Resume Analysis</h3>
                 <p className="text-gray-400">Create and analyze professional resumes with our AI tools to stand out to recruiters and ATS systems.</p>
-              </motion.div>
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-cyan-400/50">
-                <MessageSquare className="mb-4 h-12 w-12 text-cyan-400" />
+              </div>
+              <div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-cyan-400/50">
                 <h3 className="mb-2 text-xl font-bold">Career Assistant</h3>
                 <p className="text-gray-400">AI-powered assistant providing career advice, interview tips, and professional guidance.</p>
-              </motion.div>
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-violet-400/50">
-                <FileText className="mb-4 h-12 w-12 text-violet-400" />
+              </div>
+              <div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-violet-400/50">
                 <h3 className="mb-2 text-xl font-bold">AI Resume Maker</h3>
                 <p className="text-gray-400">Resume-building tool that generates optimized CVs tailored to specific job opportunities.</p>
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
@@ -338,21 +329,19 @@ const HomePage = ({ navigate }) => {
         <section id="resume-features" className="relative z-10 border-t border-white/10 bg-black py-24">
           <div className="container px-4">
             <div className="mb-16 text-center">
-              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+              <h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                 Advanced Resume Tools
-              </motion.h2>
-              <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} viewport={{ once: true }} className="mt-4 text-gray-400">
+              </h2>
+              <p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} viewport={{ once: true }} className="mt-4 text-gray-400">
                 Create, analyze, and optimize your resume with our AI-powered tools
-              </motion.p>
+              </p>
             </div>
 
             <div className="grid gap-12 lg:grid-cols-2">
               {/* AI Resume Builder Feature */}
-              <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="relative rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+              <div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="relative rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
                 <div className="mb-6 flex items-center space-x-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400/20 to-cyan-400/10">
-                    <FileSparkles className="h-6 w-6 text-cyan-400" />
-                  </div>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400/20 to-cyan-400/10"></div>
                   <h3 className="text-2xl font-bold">AI Resume Builder</h3>
                 </div>
 
@@ -362,20 +351,17 @@ const HomePage = ({ navigate }) => {
                   <div className="space-y-3">
                     {["Multiple professional templates", "AI-powered content suggestions", "Keyword optimization for job matching", "Real-time preview and editing", "One-click export to PDF"].map((feature, i) => (
                       <div key={i} className="flex items-start space-x-2">
-                        <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-cyan-400" />
                         <span className="text-sm text-gray-300">{feature}</span>
                       </div>
                     ))}
                   </div>
                 </div>
-              </motion.div>
+              </div>
 
               {/* AI Resume Analysis Feature */}
-              <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }} className="relative rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+              <div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }} className="relative rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
                 <div className="mb-6 flex items-center space-x-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-violet-400/20 to-violet-400/10">
-                    <FileSearch className="h-6 w-6 text-violet-400" />
-                  </div>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-violet-400/20 to-violet-400/10"></div>
                   <h3 className="text-2xl font-bold">Resume Analysis</h3>
                 </div>
 
@@ -385,17 +371,16 @@ const HomePage = ({ navigate }) => {
                   <div className="space-y-3">
                     {["Comprehensive content evaluation", "Formatting and structure review", "Skill gap identification", "Keyword optimization suggestions", "Personalized improvement recommendations"].map((feature, i) => (
                       <div key={i} className="flex items-start space-x-2">
-                        <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-violet-400" />
                         <span className="text-sm text-gray-300">{feature}</span>
                       </div>
                     ))}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
 
             {/* Process Animation */}
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} viewport={{ once: true }} className="mt-24 rounded-2xl border border-white/10 bg-gradient-to-br from-gray-900 to-black p-6 backdrop-blur-sm">
+            <div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} viewport={{ once: true }} className="mt-24 rounded-2xl border border-white/10 bg-gradient-to-br from-gray-900 to-black p-6 backdrop-blur-sm">
               <h3 className="mb-8 text-center text-2xl font-bold">The Resume Creation & Analysis Process</h3>
 
               <div className="relative">
@@ -448,7 +433,7 @@ const HomePage = ({ navigate }) => {
                           <div className="mt-2 flex-1 rounded border border-white/10 p-2">
                             <div className={`h-4 w-1/3 rounded-full ${animationStep === 1 ? "bg-cyan-400/20" : "bg-white/10"}`}></div>
                             <div className="mt-1 h-3 w-full rounded-full bg-white/10"></div>
-                            <motion.div animate={{ opacity: animationStep === 1 ? [0.3, 1, 0.3] : 0.3 }} transition={{ duration: 1, repeat: animationStep === 1 ? Number.POSITIVE_INFINITY : 0 }} className="mt-1 h-3 w-2/3 rounded-full bg-cyan-400/20"></motion.div>
+                            <div animate={{ opacity: animationStep === 1 ? [0.3, 1, 0.3] : 0.3 }} transition={{ duration: 1, repeat: animationStep === 1 ? Number.POSITIVE_INFINITY : 0 }} className="mt-1 h-3 w-2/3 rounded-full bg-cyan-400/20"></div>
                             <div className="mt-1 h-3 w-full rounded-full bg-white/10"></div>
                           </div>
                         </div>
@@ -489,20 +474,19 @@ const HomePage = ({ navigate }) => {
                                 <div className="h-3 w-1/3 rounded-full bg-white/20"></div>
                                 {animationStep === 2 && (
                                   <div className="flex items-center space-x-1 rounded-sm bg-cyan-400/20 px-1.5 py-0.5">
-                                    <BrainCircuit className="h-2.5 w-2.5 text-cyan-400" />
                                     <span className="text-[10px] text-cyan-400">AI Suggestion</span>
                                   </div>
                                 )}
                               </div>
                               <div className="mt-1 h-3 w-full rounded-full bg-white/10"></div>
-                              {animationStep === 2 && <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }} className="mt-1 h-3 w-2/3 rounded-full bg-cyan-400/30"></motion.div>}
+                              {animationStep === 2 && <div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }} className="mt-1 h-3 w-2/3 rounded-full bg-cyan-400/30"></div>}
                             </div>
 
                             <div className="h-3 w-full rounded-full bg-white/10"></div>
                           </div>
 
                           {/* Scanning animation */}
-                          {animationStep === 2 && <motion.div initial={{ top: 0 }} animate={{ top: "100%" }} transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, repeatType: "loop" }} className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></motion.div>}
+                          {animationStep === 2 && <div initial={{ top: 0 }} animate={{ top: "100%" }} transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, repeatType: "loop" }} className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>}
                         </div>
                       </div>
                     </div>
@@ -529,8 +513,8 @@ const HomePage = ({ navigate }) => {
                           {/* Export buttons */}
                           {animationStep === 3 && (
                             <div className="mt-auto flex justify-end space-x-2">
-                              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="h-6 w-12 rounded-sm bg-gray-300"></motion.div>
-                              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="h-6 w-12 rounded-sm bg-cyan-400"></motion.div>
+                              <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="h-6 w-12 rounded-sm bg-gray-300"></div>
+                              <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="h-6 w-12 rounded-sm bg-cyan-400"></div>
                             </div>
                           )}
                         </div>
@@ -566,9 +550,7 @@ const HomePage = ({ navigate }) => {
                             {animationStep === 4 && (
                               <div className="flex items-center space-x-1">
                                 <div className="text-sm font-bold text-violet-400">{Math.floor(Math.random() * 20) + 80}%</div>
-                                <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}>
-                                  <RefreshCw className="h-4 w-4 text-violet-400" />
-                                </motion.div>
+                                <div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}></div>
                               </div>
                             )}
                           </div>
@@ -577,28 +559,24 @@ const HomePage = ({ navigate }) => {
                           <div className="mt-3 space-y-2">
                             {[...Array(3)].map((_, i) => (
                               <div key={i} className={`flex items-center space-x-2 rounded border border-white/10 p-2 ${animationStep === 4 && i === 0 ? "border-violet-400/30 bg-violet-950/20" : ""}`}>
-                                {animationStep === 4 && i === 0 ? <FileSearch className="h-3.5 w-3.5 text-violet-400" /> : <div className="h-3.5 w-3.5 rounded-full bg-white/20"></div>}
+                                {animationStep === 4 && i === 0 ? <></> : <div className="h-3.5 w-3.5 rounded-full bg-white/20"></div>}
                                 <div className="flex-1">
                                   <div className="h-2.5 w-full rounded-full bg-white/20"></div>
                                 </div>
-                                {animationStep === 4 && i === 0 && (
-                                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-                                    <Check className="h-3.5 w-3.5 text-green-400" />
-                                  </motion.div>
-                                )}
+                                {animationStep === 4 && i === 0 && <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}></div>}
                               </div>
                             ))}
                           </div>
 
                           {/* Animation effect */}
-                          {animationStep === 4 && <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: [1, 1.5, 1], opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }} className="absolute right-3 top-3 h-12 w-12 rounded-full bg-violet-400/10"></motion.div>}
+                          {animationStep === 4 && <div initial={{ scale: 0, opacity: 0 }} animate={{ scale: [1, 1.5, 1], opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }} className="absolute right-3 top-3 h-12 w-12 rounded-full bg-violet-400/10"></div>}
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
 
@@ -610,21 +588,18 @@ const HomePage = ({ navigate }) => {
               <p className="mt-4 text-gray-400">Secure, transparent, and decentralized career management</p>
             </div>
             <div className="grid gap-8 md:grid-cols-3">
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-cyan-400/50">
-                <Wallet className="mb-4 h-12 w-12 text-cyan-400" />
+              <div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-cyan-400/50">
                 <h3 className="mb-2 text-xl font-bold">Decentralized Identity</h3>
                 <p className="text-gray-400">Own your professional identity with blockchain-based credentials that you control.</p>
-              </motion.div>
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-violet-400/50">
-                <CheckCircle2 className="mb-4 h-12 w-12 text-violet-400" />
+              </div>
+              <div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-violet-400/50">
                 <h3 className="mb-2 text-xl font-bold">Proof-of-Skill</h3>
                 <p className="text-gray-400">Verifiable skill credentials that prove your expertise through blockchain verification.</p>
-              </motion.div>
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-cyan-400/50">
-                <FileText className="mb-4 h-12 w-12 text-cyan-400" />
+              </div>
+              <div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }} className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-cyan-400/50">
                 <h3 className="mb-2 text-xl font-bold">Credential Validation</h3>
                 <p className="text-gray-400">Transparent validation of job credentials and certifications through immutable records.</p>
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
@@ -633,17 +608,17 @@ const HomePage = ({ navigate }) => {
         <section id="job-recommendations" className="relative z-10 border-t border-white/10 bg-black py-24">
           <div className="container px-4">
             <div className="mb-16 text-center">
-              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+              <h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                 AI-Powered Job Recommendations
-              </motion.h2>
-              <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} viewport={{ once: true }} className="mt-4 text-gray-400">
+              </h2>
+              <p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} viewport={{ once: true }} className="mt-4 text-gray-400">
                 Discover perfect job matches tailored to your unique skills and experience
-              </motion.p>
+              </p>
             </div>
 
             <div className="grid gap-12 lg:grid-cols-2">
               {/* Left Column - Description */}
-              <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="flex flex-col justify-center space-y-8">
+              <div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="flex flex-col justify-center space-y-8">
                 <div>
                   <h3 className="text-2xl font-bold">Find Your Dream Job with AI</h3>
                   <p className="mt-4 text-gray-300">Our advanced AI analyzes thousands of job listings in real-time, matching them against your unique profile to find opportunities that truly align with your career goals.</p>
@@ -652,18 +627,17 @@ const HomePage = ({ navigate }) => {
                 <div className="space-y-4">
                   {["Personalized job matches based on your skills, experience, and preferences", "Real-time opportunity alerts for high-match positions", "Intelligent filtering that prioritizes roles with the best career growth potential", "Transparent match scores showing why each job is recommended", "Skill gap analysis with suggestions to improve your qualifications"].map((feature, i) => (
                     <div key={i} className="flex items-start space-x-2">
-                      <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-cyan-400" />
                       <span className="text-sm text-gray-300">{feature}</span>
                     </div>
                   ))}
                 </div>
-              </motion.div>
+              </div>
 
               {/* Right Column - Animation */}
-              <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }} className="relative h-[500px] overflow-hidden rounded-2xl p-6">
+              <div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }} className="relative h-[500px] overflow-hidden rounded-2xl p-6">
                 {/* Profile Card */}
                 {jobAnimationStep == 1 ? (
-                  <motion.div
+                  <div
                     initial={{ y: 50, opacity: 0 }}
                     animate={{
                       y: jobAnimationStep >= 2 ? -20 : 0,
@@ -689,7 +663,7 @@ const HomePage = ({ navigate }) => {
                         <span className="text-xs text-gray-400">5+ years</span>
                       </div>
                       <div className="h-2 rounded-full bg-gray-700">
-                        <motion.div initial={{ width: "0%" }} animate={{ width: "85%" }} transition={{ duration: 1 }} className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-500"></motion.div>
+                        <div initial={{ width: "0%" }} animate={{ width: "85%" }} transition={{ duration: 1 }} className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-500"></div>
                       </div>
                     </div>
 
@@ -697,16 +671,16 @@ const HomePage = ({ navigate }) => {
                       <span className="text-xs text-gray-400">Top Skills</span>
                       <div className="flex flex-wrap gap-2">
                         {["JavaScript", "React", "Node.js", "Cloud", "AI/ML"].map((skill, index) => (
-                          <motion.span key={index} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 + index * 0.1 }} className="rounded-full bg-gray-700 px-2 py-1 text-xs text-gray-300">
+                          <span key={index} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 + index * 0.1 }} className="rounded-full bg-gray-700 px-2 py-1 text-xs text-gray-300">
                             {skill}
-                          </motion.span>
+                          </span>
                         ))}
                       </div>
                     </div>
 
                     {/* AI Scanning Effect */}
                     {jobAnimationStep < 3 && (
-                      <motion.div
+                      <div
                         initial={{ top: "0%", opacity: 0 }}
                         animate={{
                           top: ["0%", "100%"],
@@ -719,35 +693,33 @@ const HomePage = ({ navigate }) => {
                         className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
                       />
                     )}
-                  </motion.div>
+                  </div>
                 ) : (
                   <></>
                 )}
 
                 {/* AI Processing Animation */}
                 {jobAnimationStep >= 2 && jobAnimationStep < 3 && (
-                  <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ duration: 0.5 }} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                  <div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ duration: 0.5 }} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                     <div className="relative h-20 w-20">
-                      <motion.div animate={{ rotate: 360 }} transition={{ duration: 8, repeat: Number.POSITIVE_INFINITY, ease: "linear" }} className="absolute inset-0 rounded-full border-2 border-transparent border-t-cyan-400"></motion.div>
-                      <motion.div animate={{ rotate: -360 }} transition={{ duration: 12, repeat: Number.POSITIVE_INFINITY, ease: "linear" }} className="absolute inset-2 rounded-full border-2 border-transparent border-t-violet-400"></motion.div>
-                      <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }} className="absolute inset-0 flex items-center justify-center">
-                        <BrainCircuit className="h-8 w-8 text-cyan-400" />
-                      </motion.div>
+                      <div animate={{ rotate: 360 }} transition={{ duration: 8, repeat: Number.POSITIVE_INFINITY, ease: "linear" }} className="absolute inset-0 rounded-full border-2 border-transparent border-t-cyan-400"></div>
+                      <div animate={{ rotate: -360 }} transition={{ duration: 12, repeat: Number.POSITIVE_INFINITY, ease: "linear" }} className="absolute inset-2 rounded-full border-2 border-transparent border-t-violet-400"></div>
+                      <div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }} className="absolute inset-0 flex items-center justify-center"></div>
                     </div>
                     <div className="mt-4 text-center text-sm text-cyan-400">
-                      <motion.p animate={{ opacity: [0, 1, 1, 0] }} transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, repeatDelay: 1 }}>
+                      <p animate={{ opacity: [0, 1, 1, 0] }} transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, repeatDelay: 1 }}>
                         Analyzing profile...
-                      </motion.p>
+                      </p>
                     </div>
-                  </motion.div>
+                  </div>
                 )}
 
                 {/* Job Recommendations */}
                 <div className="absolute bottom-6 left-1/2 w-[90%] max-w-[320px] -translate-x-1/2 space-y-3">
                   {jobAnimationStep >= 3 && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="text-center">
+                    <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="text-center">
                       <div className="mb-2 text-sm font-medium text-white">Top Job Matches</div>
-                    </motion.div>
+                    </div>
                   )}
 
                   {[
@@ -755,7 +727,7 @@ const HomePage = ({ navigate }) => {
                     { title: "Full Stack Engineer", company: "InnovateTech", match: 92, location: "New York, NY" },
                     { title: "React Team Lead", company: "FutureSoft", match: 87, location: "San Francisco, CA" },
                   ].map((job, index) => (
-                    <motion.div
+                    <div
                       key={index}
                       initial={{ y: 20, opacity: 0 }}
                       animate={{
@@ -770,7 +742,7 @@ const HomePage = ({ navigate }) => {
                     >
                       <div className="mb-1 flex justify-between">
                         <h5 className="font-medium text-white">{job.title}</h5>
-                        <motion.div
+                        <div
                           initial={{ scale: 0 }}
                           animate={{
                             scale: jobAnimationStep >= 3 ? 1 : 0,
@@ -782,7 +754,7 @@ const HomePage = ({ navigate }) => {
                           className={`flex h-6 w-12 items-center justify-center rounded-full text-xs font-bold ${job.match > 95 ? "bg-green-400/20 text-green-400" : job.match > 85 ? "bg-cyan-400/20 text-cyan-400" : "bg-violet-400/20 text-violet-400"}`}
                         >
                           {job.match}%
-                        </motion.div>
+                        </div>
                       </div>
                       <div className="flex items-center justify-between text-xs text-gray-400">
                         <span>{job.company}</span>
@@ -790,7 +762,7 @@ const HomePage = ({ navigate }) => {
                       </div>
 
                       {/* Match Reasons */}
-                      <motion.div
+                      <div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{
                           height: jobAnimationStep >= 3 ? "auto" : 0,
@@ -803,7 +775,6 @@ const HomePage = ({ navigate }) => {
                         className="mt-2 overflow-hidden rounded border-t border-white/5 pt-2"
                       >
                         <div className="flex items-center space-x-1 text-[10px] text-gray-400">
-                          <BrainCircuit className="h-3 w-3 text-cyan-400" />
                           <span>Match factors:</span>
                         </div>
                         <div className="mt-1 flex flex-wrap gap-1">
@@ -813,11 +784,11 @@ const HomePage = ({ navigate }) => {
                             </span>
                           ))}
                         </div>
-                      </motion.div>
+                      </div>
 
                       {/* Highlight Pulse Effect for first job */}
                       {index === 0 && jobAnimationStep >= 3 && (
-                        <motion.div
+                        <div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: [0, 0.2, 0] }}
                           transition={{
@@ -826,16 +797,16 @@ const HomePage = ({ navigate }) => {
                             repeatDelay: 1,
                           }}
                           className="absolute inset-0 rounded-lg bg-cyan-400"
-                        ></motion.div>
+                        ></div>
                       )}
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
 
                 {/* Connection Lines Animation */}
                 {jobAnimationStep >= 2 && (
                   <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg">
-                    <motion.path
+                    <path
                       d="M160,80 C160,140 160,200 160,260"
                       fill="none"
                       stroke="url(#jobGrad)"
@@ -860,7 +831,7 @@ const HomePage = ({ navigate }) => {
                 {/* Floating Data Points */}
                 {jobAnimationStep === 2 &&
                   [...Array(5)].map((_, i) => (
-                    <motion.div
+                    <div
                       key={i}
                       initial={{
                         x: Math.random() * 300 - 150,
@@ -877,12 +848,12 @@ const HomePage = ({ navigate }) => {
                         delay: i * 0.3,
                       }}
                       className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400"
-                    ></motion.div>
+                    ></div>
                   ))}
 
                 {/* AI Analysis Floating Elements */}
                 {jobAnimationStep === 1 && (
-                  <motion.div
+                  <div
                     initial={{ opacity: 0, x: -30 }}
                     animate={{
                       opacity: [0, 1, 1, 0],
@@ -898,11 +869,11 @@ const HomePage = ({ navigate }) => {
                       <div className="h-2 w-2 rounded-full bg-cyan-400"></div>
                       <p className="text-xs text-white">Matching skills</p>
                     </div>
-                  </motion.div>
+                  </div>
                 )}
 
                 {jobAnimationStep === 2 && (
-                  <motion.div
+                  <div
                     initial={{ opacity: 0, x: 30 }}
                     animate={{
                       opacity: [0, 1, 1, 0],
@@ -918,9 +889,9 @@ const HomePage = ({ navigate }) => {
                       <div className="h-2 w-2 rounded-full bg-violet-400"></div>
                       <p className="text-xs text-white">Analyzing requirements</p>
                     </div>
-                  </motion.div>
+                  </div>
                 )}
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
@@ -931,23 +902,22 @@ const HomePage = ({ navigate }) => {
             <div className="grid gap-12 lg:grid-cols-2">
               {/* Left Column */}
               <div className="space-y-8">
-                <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }}>
+                <div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }}>
                   <h2 className="text-4xl font-bold tracking-tighter sm:text-5xl">Experience Our AI Career Assistant</h2>
                   <p className="mt-4 text-xl text-gray-400">Get personalized career advice, interview tips, and professional guidance from our AI-powered chatbot.</p>
-                </motion.div>
+                </div>
 
-                <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }} className="space-y-4">
+                <div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }} className="space-y-4">
                   {["Resume optimization suggestions", "Interview preparation and practice", "Career path planning and guidance", "Skill development recommendations"].map((feature, index) => (
                     <div key={index} className="flex items-center space-x-3">
-                      <CheckCircle2 className="h-6 w-6 text-cyan-400" />
                       <span className="text-lg text-gray-200">{feature}</span>
                     </div>
                   ))}
-                </motion.div>
+                </div>
               </div>
 
               {/* Right Column - Chat Interface */}
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="rounded-2xl border border-white/10 bg-gradient-to-b from-gray-900 to-black p-6">
+              <div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="rounded-2xl border border-white/10 bg-gradient-to-b from-gray-900 to-black p-6">
                 <div className="mb-6 space-y-2">
                   <h3 className="text-xl font-semibold text-white">Career Assistant</h3>
                   <p className="text-sm text-gray-400">AI-powered career guidance</p>
@@ -964,12 +934,10 @@ const HomePage = ({ navigate }) => {
                 <br />
                 <div className="relative">
                   <input type="text" placeholder="Ask about your career..." className="w-full rounded-xl border border-white/10 bg-gray-800/30 px-4 py-3 pr-12 text-white placeholder-gray-400 backdrop-blur-sm focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400" />
-                  <Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 bg-transparent hover:bg-white/10">
-                    <ArrowRight className="h-5 w-5 text-cyan-400" />
-                  </Button>
+                  <Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 bg-transparent hover:bg-white/10"></Button>
                 </div>
                 <p className="mt-3 text-sm text-gray-500">This is a demo. Try asking about resume tips, interview preparation, or career paths.</p>
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
@@ -982,15 +950,12 @@ const HomePage = ({ navigate }) => {
               <p className="mx-auto mt-4 max-w-xl text-gray-400">Join thousands of professionals who trust JobPilot to advance their careers through AI and blockchain technology.</p>
               <ul className="mx-auto mt-8 flex max-w-xl flex-col gap-4 text-left">
                 <li className="flex items-center space-x-3">
-                  <CheckCircle2 className="h-5 w-5 text-cyan-400" />
                   <span>Personalized job recommendations</span>
                 </li>
                 <li className="flex items-center space-x-3">
-                  <CheckCircle2 className="h-5 w-5 text-cyan-400" />
                   <span>Skill-based learning paths</span>
                 </li>
                 <li className="flex items-center space-x-3">
-                  <CheckCircle2 className="h-5 w-5 text-cyan-400" />
                   <span>Blockchain-verified credentials</span>
                 </li>
               </ul>
@@ -1001,7 +966,6 @@ const HomePage = ({ navigate }) => {
                 className="mt-8 bg-gradient-to-r from-cyan-400 to-violet-500 text-lg text-black hover:from-cyan-500 hover:to-violet-600"
               >
                 Create Your Profile
-                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
           </div>
@@ -1011,7 +975,6 @@ const HomePage = ({ navigate }) => {
         <footer className="border-t border-white/10 bg-black py-8">
           <div className="container flex flex-col items-center justify-between space-y-4 px-4 md:flex-row md:space-y-0">
             <div className="flex items-center space-x-2">
-              <BrainCircuit className="h-6 w-6 text-cyan-400" />
               <span className="font-bold">JobPilot</span>
             </div>
             <p className="text-sm text-gray-400">© {new Date().getFullYear()} JobPilot. All rights reserved.</p>

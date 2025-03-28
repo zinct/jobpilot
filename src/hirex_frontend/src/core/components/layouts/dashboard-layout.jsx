@@ -1,10 +1,5 @@
-"use client";
-
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { BrainCircuit, FileText, Briefcase, MessageSquare, User, LogOut, FileSearch } from "lucide-react";
 import { Button } from "@/core/components/ui/button";
-import { Outlet, useLocation, useNavigate } from "react-router";
 import { useAuth } from "../../providers/auth-provider";
 import { LoadingOverlay } from "../loading-overlay";
 
@@ -12,35 +7,33 @@ const menuItems = [
   {
     path: "/dashboard",
     name: "Overview",
-    icon: <BrainCircuit className="h-6 w-6" />,
+    icon: <></>,
   },
   {
     path: "/dashboard/cv-generator",
     name: "Resume Builder",
-    icon: <FileText className="h-6 w-6" />,
+    icon: <></>,
   },
   {
     name: "Resume Analysis",
     path: "/dashboard/cv-analysis",
-    icon: <FileSearch className="h-6 w-6" />,
+    icon: <></>,
   },
   {
     path: "/dashboard/job-recommendations",
     name: "Job Recommendations",
-    icon: <Briefcase className="h-6 w-6" />,
+    icon: <></>,
   },
 
   {
     path: "/dashboard/career-chatbot",
     name: "Career Assistant",
-    icon: <MessageSquare className="h-6 w-6" />,
+    icon: <></>,
   },
 ];
 
-export default function DashboardLayout() {
-  const location = useLocation();
+export default function DashboardLayout({ children, location, navigate }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const navigate = useNavigate();
   const { isLoading, logout, user } = useAuth();
 
   useEffect(() => {
@@ -84,9 +77,7 @@ export default function DashboardLayout() {
         {/* Logo */}
         <div className="flex h-20 items-center border-b border-white/10 px-6">
           <a href="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50">
-              <BrainCircuit className="h-5 w-5 text-white" />
-            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50"></div>
             <span className="text-2xl font-bold">JobPilot</span>
           </a>
         </div>
@@ -97,7 +88,7 @@ export default function DashboardLayout() {
           {menuItems.map((item) => (
             <a key={item.path} href="#" onClick={() => handleChangePage(item)} className={`group relative mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-md font-medium transition-all ${isActive(item.path) ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white"}`}>
               {/* Active indicator */}
-              {isActive(item.path) && <motion.div layoutId="activeIndicator" className="absolute left-0 top-0 h-full w-1 rounded-r-full bg-gradient-to-b from-cyan-400 to-violet-500" />}
+              {isActive(item.path) && <div layoutId="activeIndicator" className="absolute left-0 top-0 h-full w-1 rounded-r-full bg-gradient-to-b from-cyan-400 to-violet-500" />}
 
               {/* Icon with gradient when active */}
               <div className={`${isActive(item.path) ? "text-gradient-to-r from-cyan-400 to-violet-500" : "text-gray-400 group-hover:text-white"}`}>{item.icon}</div>
@@ -116,7 +107,6 @@ export default function DashboardLayout() {
               }}
               className="group mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-lg font-medium text-gray-400 transition-all hover:bg-white/5 hover:text-white"
             >
-              <User className="h-6 w-6 text-gray-400 group-hover:text-white" />
               <span>Profile</span>
             </a>
           </div>
@@ -143,7 +133,7 @@ export default function DashboardLayout() {
             ) : (
               <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-gray-400 hover:bg-white/10 hover:text-white" asChild>
                 <a href="/" onClick={logout}>
-                  <LogOut className="h-5 w-5" />
+                  Logout
                 </a>
               </Button>
             )}
@@ -161,9 +151,7 @@ export default function DashboardLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="min-h-[calc(100vh-5rem)] p-4 md:p-6 container">
-          <Outlet />
-        </main>
+        <main className="min-h-[calc(100vh-5rem)] p-4 md:p-6 container">{children}</main>
       </div>
     </div>
   );

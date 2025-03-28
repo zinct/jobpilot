@@ -1,12 +1,7 @@
-import { motion } from "framer-motion";
-import { FileText, Briefcase, BookOpen, ArrowRight, ChevronRight, Plus, Calendar, Sparkles, BrainCircuit, CheckCircle2 } from "lucide-react";
 import { Button } from "@/core/components/ui/button";
-import { useErrorAlert } from "../../../core/components/error-alert";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
 
-const DashboardPage = () => {
-  const navigate = useNavigate();
+const DashboardPage = ({ navigate }) => {
   const [animateBackground, setAnimateBackground] = useState(false);
 
   // Start background animation after component mounts
@@ -19,7 +14,7 @@ const DashboardPage = () => {
 
   return (
     <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-gray-900 to-black p-6">
+      <div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-gray-900 to-black p-6">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
           {/* Curved Lines */}
@@ -37,7 +32,7 @@ const DashboardPage = () => {
               </linearGradient>
             </defs>
             {/* Top Curves */}
-            <motion.path
+            <path
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
               transition={{
@@ -52,7 +47,7 @@ const DashboardPage = () => {
               stroke="url(#grad1)"
               strokeWidth="1"
             />
-            <motion.path
+            <path
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
               transition={{
@@ -71,9 +66,9 @@ const DashboardPage = () => {
           </svg>
 
           {/* Straight Lines */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="absolute inset-0">
+          <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="absolute inset-0">
             {[...Array(2)].map((_, i) => (
-              <motion.div
+              <div
                 key={i}
                 initial={{ x: "100%", opacity: 0 }}
                 animate={{
@@ -96,64 +91,57 @@ const DashboardPage = () => {
                 }}
               />
             ))}
-          </motion.div>
+          </div>
         </div>
 
         {/* Animated Background Gradients */}
         <div className="absolute inset-0 z-[1]">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: animateBackground ? 0.2 : 0 }} transition={{ duration: 2 }} className="absolute -left-1/4 top-1/4 h-40 w-40 rounded-full bg-cyan-500/30 blur-3xl" />
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: animateBackground ? 0.2 : 0 }} transition={{ duration: 2, delay: 0.5 }} className="absolute -right-1/4 top-1/2 h-40 w-40 rounded-full bg-violet-500/30 blur-3xl" />
+          <div initial={{ opacity: 0 }} animate={{ opacity: animateBackground ? 0.2 : 0 }} transition={{ duration: 2 }} className="absolute -left-1/4 top-1/4 h-40 w-40 rounded-full bg-cyan-500/30 blur-3xl" />
+          <div initial={{ opacity: 0 }} animate={{ opacity: animateBackground ? 0.2 : 0 }} transition={{ duration: 2, delay: 0.5 }} className="absolute -right-1/4 top-1/2 h-40 w-40 rounded-full bg-violet-500/30 blur-3xl" />
         </div>
 
         {/* Content */}
         <div className="relative z-10 grid gap-8 md:grid-cols-5">
           <div className="md:col-span-3 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400/20 to-violet-400/20">
-                <BrainCircuit className="h-5 w-5 text-cyan-400" />
-              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400/20 to-violet-400/20"></div>
               <h2 className="text-2xl font-bold">Welcome to JobPilot</h2>
             </div>
 
             <p className="text-gray-300">JobPilot is an AI-powered career advancement platform that helps professionals discover opportunities, develop skills, and accelerate their career growth through cutting-edge technology.</p>
 
             <div className="space-y-2 pt-2">
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3, duration: 0.5 }} className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 text-cyan-400" />
+              <div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3, duration: 0.5 }} className="flex items-start gap-2">
                 <p className="text-sm text-gray-300">
                   <span className="font-medium text-white">AI-Powered Matching:</span> Our algorithms connect you with the perfect job opportunities based on your unique skills and preferences.
                 </p>
-              </motion.div>
+              </div>
 
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5, duration: 0.5 }} className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 text-violet-400" />
+              <div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5, duration: 0.5 }} className="flex items-start gap-2">
                 <p className="text-sm text-gray-300">
                   <span className="font-medium text-white">Resume Optimization:</span> Create and analyze professional resumes with our AI tools to stand out to recruiters and ATS systems.
                 </p>
-              </motion.div>
+              </div>
 
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7, duration: 0.5 }} className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 text-cyan-400" />
+              <div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7, duration: 0.5 }} className="flex items-start gap-2">
                 <p className="text-sm text-gray-300">
                   <span className="font-medium text-white">Blockchain Verification:</span> Secure and transparent credential verification that gives you an edge in the job market.
                 </p>
-              </motion.div>
+              </div>
             </div>
           </div>
 
           <div className="md:col-span-2 flex items-center justify-center">
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2, duration: 0.8 }} className="relative">
+            <div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2, duration: 0.8 }} className="relative">
               {/* Career Path Visualization */}
               <div className="w-full max-w-[280px] rounded-lg border border-white/20 bg-gradient-to-b from-gray-800/80 to-gray-900/80 p-4 shadow-xl backdrop-blur-sm">
                 <div className="mb-3 flex items-center justify-between">
                   <h3 className="text-sm font-medium">Your Career Path</h3>
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-cyan-400/20">
-                    <Sparkles className="h-3 w-3 text-cyan-400" />
-                  </div>
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-cyan-400/20"></div>
                 </div>
 
                 <div className="relative mb-2 h-1 w-full rounded-full bg-white/10">
-                  <motion.div initial={{ width: "0%" }} animate={{ width: "65%" }} transition={{ delay: 1, duration: 1.5 }} className="absolute h-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-500" />
+                  <div initial={{ width: "0%" }} animate={{ width: "65%" }} transition={{ delay: 1, duration: 1.5 }} className="absolute h-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-500" />
                 </div>
 
                 <div className="mb-4 flex justify-between text-xs text-gray-400">
@@ -189,7 +177,7 @@ const DashboardPage = () => {
                 </div>
 
                 {/* AI Scanning Effect */}
-                <motion.div
+                <div
                   initial={{ top: 0 }}
                   animate={{ top: "100%" }}
                   transition={{
@@ -204,25 +192,23 @@ const DashboardPage = () => {
               </div>
 
               {/* Floating Elements */}
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 0.8 }} className="absolute -right-4 -top-4 rounded-lg border border-white/10 bg-black/60 p-2 backdrop-blur-sm">
+              <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 0.8 }} className="absolute -right-4 -top-4 rounded-lg border border-white/10 bg-black/60 p-2 backdrop-blur-sm">
                 <div className="flex items-center space-x-2">
                   <div className="h-2 w-2 rounded-full bg-cyan-400"></div>
                   <p className="text-xs text-white">AI analyzing profile</p>
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
         {/* CV Generator Card */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+        <div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400/20">
-                <FileText className="h-5 w-5 text-cyan-400" />
-              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400/20"></div>
               <h3 className="text-lg font-medium">CV Generator</h3>
             </div>
             <span className="rounded-full bg-cyan-400/20 px-2 py-1 text-xs text-cyan-400">AI-Powered</span>
@@ -235,17 +221,14 @@ const DashboardPage = () => {
             }}
           >
             Create New CV
-            <ArrowRight className="h-4 w-4" />
           </Button>
-        </motion.div>
+        </div>
 
         {/* Job Recommendations Card */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+        <div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-400/20">
-                <Briefcase className="h-5 w-5 text-violet-400" />
-              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-400/20"></div>
               <h3 className="text-lg font-medium">Job Matches</h3>
             </div>
             <span className="rounded-full bg-violet-400/20 px-2 py-1 text-xs text-violet-400">AI-Recommendation</span>
@@ -258,17 +241,14 @@ const DashboardPage = () => {
             }}
           >
             View Job Matches
-            <ArrowRight className="h-4 w-4" />
           </Button>
-        </motion.div>
+        </div>
 
         {/* Course Recommendations Card */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+        <div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400/20">
-                <BookOpen className="h-5 w-5 text-cyan-400" />
-              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400/20"></div>
               <h3 className="text-lg font-medium">Resume Analysis</h3>
             </div>
             <span className="rounded-full bg-cyan-400/20 px-2 py-1 text-xs text-cyan-400">AI-Expert</span>
@@ -281,27 +261,21 @@ const DashboardPage = () => {
             }}
           >
             Analyze My Resume
-            <ArrowRight className="h-4 w-4" />
           </Button>
-        </motion.div>
+        </div>
 
         {/* Course Recommendations Card */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm flex flex-col h-full">
+        <div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm flex flex-col h-full">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-400/20">
-                <CheckCircle2 className="h-5 w-5 text-violet-400" />
-              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-400/20"></div>
               <h3 className="text-lg font-medium">Career Assistant</h3>
             </div>
             <span className="rounded-full bg-violet-400/20 px-2 py-1 text-xs text-violet-400">Expert-Assistant</span>
           </div>
           <p className="mb-4 text-gray-400 flex-grow">Get personalized career guidance and job search support tailored to your goals.</p>
-          <Button className="w-full mt-auto flex justify-between">
-            Start your career plan
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </motion.div>
+          <Button className="w-full mt-auto flex justify-between">Start your career plan</Button>
+        </div>
       </div>
     </div>
   );

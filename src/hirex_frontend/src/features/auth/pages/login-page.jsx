@@ -1,13 +1,9 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { ArrowLeft, BrainCircuit, Wallet, Fingerprint } from "lucide-react";
 import { Button } from "@/core/components/ui/button";
 import { useAuth } from "../../../core/providers/auth-provider";
 import { useEffect } from "react";
 
 export default function LoginPage({ navigate }) {
-  const { login, isLoading, isAuthenticated } = useAuth();
+  const { login, isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated) navigate("/dashboard");
@@ -21,13 +17,16 @@ export default function LoginPage({ navigate }) {
         <header className="fixed top-0 z-50 w-full border-b border-white/10 bg-black/50 backdrop-blur-xl">
           <div className="container flex h-16 items-center justify-between px-4">
             <a className="flex items-center space-x-2 font-bold" href="/">
-              <BrainCircuit className="h-6 w-6 text-cyan-400" />
               <span className="text-xl">JobPilot</span>
             </a>
 
-            <a href="/">
+            <a
+              href="#"
+              onClick={() => {
+                navigate("/");
+              }}
+            >
               <Button variant="ghost" className="text-gray-400 hover:bg-white/5 hover:text-white">
-                <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Home
               </Button>
             </a>
@@ -39,7 +38,7 @@ export default function LoginPage({ navigate }) {
           <div className="mx-auto max-w-6xl">
             <div className="grid min-h-[calc(100vh-8rem)] gap-8 lg:grid-cols-2">
               {/* Left Column - Graphic */}
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className="flex items-center justify-center p-6">
+              <div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className="flex items-center justify-center p-6">
                 <div className="relative">
                   {/* Background Elements */}
                   <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-cyan-500/20 blur-3xl"></div>
@@ -49,9 +48,7 @@ export default function LoginPage({ navigate }) {
                   <div className="relative rounded-2xl border border-white/10 bg-gradient-to-b from-gray-900/80 to-black/80 p-8 backdrop-blur-sm">
                     <div className="mb-6 flex items-center justify-between">
                       <h3 className="text-xl font-bold text-white">Blockchain Authentication</h3>
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400/20">
-                        <BrainCircuit className="h-6 w-6 text-cyan-400" />
-                      </div>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400/20"></div>
                     </div>
 
                     {/* Blockchain Visualization */}
@@ -60,7 +57,7 @@ export default function LoginPage({ navigate }) {
                       <div className="relative h-48 w-full overflow-hidden rounded-lg border border-white/10 bg-black/40">
                         {/* Nodes */}
                         {[...Array(12)].map((_, i) => (
-                          <motion.div
+                          <div
                             key={i}
                             initial={{ opacity: 0.5 }}
                             animate={{ opacity: [0.3, 0.7, 0.3] }}
@@ -87,7 +84,7 @@ export default function LoginPage({ navigate }) {
                             const endY = 10 + Math.random() * 80;
 
                             return (
-                              <motion.line
+                              <line
                                 key={i}
                                 x1={`${startX}%`}
                                 y1={`${startY}%`}
@@ -111,7 +108,7 @@ export default function LoginPage({ navigate }) {
                         </svg>
 
                         {/* Animated Blocks */}
-                        <motion.div
+                        <div
                           initial={{ y: "100%" }}
                           animate={{ y: "-100%" }}
                           transition={{
@@ -127,20 +124,20 @@ export default function LoginPage({ navigate }) {
                               <div className="h-1.5 w-8 rounded-full bg-cyan-400/40"></div>
                             </div>
                           ))}
-                        </motion.div>
+                        </div>
                       </div>
 
                       {/* Wallet Connection Status */}
                       <div className="rounded-lg border border-white/10 bg-white/5 p-3">
                         <div className="mb-2 flex items-center">
-                          <motion.div
+                          <div
                             animate={{ opacity: [0.5, 1, 0.5] }}
                             transition={{
                               duration: 1.5,
                               repeat: Number.POSITIVE_INFINITY,
                             }}
                             className="mr-2 h-2 w-2 rounded-full bg-cyan-400"
-                          ></motion.div>
+                          ></div>
                           <p className="text-sm font-medium text-cyan-400">Secure Blockchain Connection</p>
                         </div>
                         <p className="text-xs text-gray-300">Choose your preferred authentication method</p>
@@ -148,32 +145,30 @@ export default function LoginPage({ navigate }) {
                     </div>
 
                     {/* Floating Elements */}
-                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }} className="absolute -right-6 top-1/4 rounded-lg border border-white/10 bg-black/60 p-2 backdrop-blur-sm">
+                    <div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }} className="absolute -right-6 top-1/4 rounded-lg border border-white/10 bg-black/60 p-2 backdrop-blur-sm">
                       <div className="flex items-center space-x-2">
-                        <Wallet className="h-4 w-4 text-cyan-400" />
                         <p className="text-xs text-white">Wallet Ready</p>
                       </div>
-                    </motion.div>
+                    </div>
 
-                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.8 }} className="absolute -left-6 bottom-1/4 rounded-lg border border-white/10 bg-black/60 p-2 backdrop-blur-sm">
+                    <div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.8 }} className="absolute -left-6 bottom-1/4 rounded-lg border border-white/10 bg-black/60 p-2 backdrop-blur-sm">
                       <div className="flex items-center space-x-2">
-                        <Fingerprint className="h-4 w-4 text-violet-400" />
                         <p className="text-xs text-white">Identity Secure</p>
                       </div>
-                    </motion.div>
+                    </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Right Column - Form */}
-              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className="flex flex-col justify-center p-6">
+              <div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className="flex flex-col justify-center p-6">
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
                   <div className="mb-6">
                     <h2 className="text-2xl font-bold text-white sm:text-3xl">Authentication Method</h2>
                     <p className="mt-2 text-gray-400">Choose your preferred authentication method to continue</p>
                   </div>
 
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
+                  <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                     <div className="grid gap-4">
                       <button onClick={login} className="group flex flex-col items-center justify-center rounded-xl border border-white/10 bg-white/5 p-6 transition-colors hover:border-violet-400/50 hover:bg-violet-950/20">
                         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-violet-500/20 to-violet-500/10">
@@ -183,7 +178,7 @@ export default function LoginPage({ navigate }) {
                         <p className="mt-2 text-center text-sm text-gray-400">Use Internet Identity for enhanced security and privacy</p>
                       </button>
                     </div>
-                  </motion.div>
+                  </div>
 
                   {/* User Agreement */}
                   <div className="mt-6 text-center text-sm text-gray-400">
@@ -197,7 +192,7 @@ export default function LoginPage({ navigate }) {
                     </a>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </main>

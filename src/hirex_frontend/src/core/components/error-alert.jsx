@@ -1,8 +1,4 @@
-"use client";
-
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { AlertTriangle, XCircle, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/core/components/ui/button";
 
 /**
@@ -58,7 +54,7 @@ export function ErrorAlert({ message = "An unexpected error occurred", onRetry, 
     switch (type) {
       case "warning":
         return {
-          icon: <AlertTriangle className="h-8 w-8 text-yellow-500" />,
+          icon: <></>,
           bgColor: "bg-yellow-950/90",
           borderColor: "border-yellow-500/20",
           iconBgColor: "bg-yellow-500/20",
@@ -66,7 +62,7 @@ export function ErrorAlert({ message = "An unexpected error occurred", onRetry, 
       case "error":
       default:
         return {
-          icon: <XCircle className="h-8 w-8 text-red-500" />,
+          icon: <></>,
           bgColor: "bg-red-950/90",
           borderColor: "border-red-500/20",
           iconBgColor: "bg-red-500/20",
@@ -83,10 +79,10 @@ export function ErrorAlert({ message = "An unexpected error occurred", onRetry, 
   };
 
   return (
-    <AnimatePresence>
+    <>
       {visible && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={handleClose}>
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ type: "spring", damping: 25, stiffness: 300 }} className={`mx-4 max-w-3xl rounded-xl border ${borderColor} ${bgColor} p-6 shadow-2xl backdrop-blur-sm`} onClick={(e) => e.stopPropagation()}>
+        <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={handleClose}>
+          <div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ type: "spring", damping: 25, stiffness: 300 }} className={`mx-4 max-w-3xl rounded-xl border ${borderColor} ${bgColor} p-6 shadow-2xl backdrop-blur-sm`} onClick={(e) => e.stopPropagation()}>
             <div className="flex flex-col items-center text-center">
               <div className={`mb-4 rounded-full ${iconBgColor} p-4`}>{icon}</div>
 
@@ -98,21 +94,11 @@ export function ErrorAlert({ message = "An unexpected error occurred", onRetry, 
               {isDevelopment && (errorStack || errorObject) && (
                 <div className="w-full mb-6">
                   <button onClick={toggleExpanded} className="flex items-center justify-center w-full text-sm text-gray-400 hover:text-white mb-2">
-                    {expanded ? (
-                      <>
-                        <ChevronUp className="h-4 w-4 mr-1" />
-                        Hide Details
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown className="h-4 w-4 mr-1" />
-                        Show Details
-                      </>
-                    )}
+                    {expanded ? <>Hide Details</> : <>Show Details</>}
                   </button>
 
                   {expanded && (
-                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="w-full">
+                    <div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="w-full">
                       <div className="bg-black/50 rounded-md p-4 text-left overflow-auto max-h-[50vh] w-full">
                         <pre className="text-xs font-mono text-gray-300 whitespace-pre-wrap break-words">
                           <code>
@@ -151,7 +137,7 @@ export function ErrorAlert({ message = "An unexpected error occurred", onRetry, 
                           </code>
                         </pre>
                       </div>
-                    </motion.div>
+                    </div>
                   )}
                 </div>
               )}
@@ -159,7 +145,6 @@ export function ErrorAlert({ message = "An unexpected error occurred", onRetry, 
               <div className="flex gap-3">
                 {onRetry && (
                   <Button onClick={onRetry} className="bg-gradient-to-r from-cyan-400 to-violet-500 text-black hover:from-cyan-500 hover:to-violet-600">
-                    <RefreshCw className="mr-2 h-4 w-4" />
                     Try Again
                   </Button>
                 )}
@@ -169,10 +154,10 @@ export function ErrorAlert({ message = "An unexpected error occurred", onRetry, 
                 </Button>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   );
 }
 

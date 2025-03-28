@@ -1,9 +1,4 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { Plus } from "lucide-react";
 import { Button } from "@/core/components/ui/button";
-import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { LoadingOverlay } from "../../core/components/loading-overlay";
 import { useAuth } from "../../core/providers/auth-provider";
@@ -27,8 +22,7 @@ const ResumeSkeletonLoader = () => {
   );
 };
 
-export default function CVGeneratorPage() {
-  const navigate = useNavigate();
+export default function CVGeneratorPage({ navigate }) {
   const { identity, isLoading: isAuthLoading, user } = useAuth();
   const { showError } = useErrorAlert();
 
@@ -96,9 +90,7 @@ export default function CVGeneratorPage() {
       } else {
         throw Error(response.err);
       }
-    } catch (err) {
-      showError(err);
-    }
+    } catch (err) {}
   }
 
   useEffect(() => {
@@ -116,21 +108,20 @@ export default function CVGeneratorPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm md:col-span-2">
+        <div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm md:col-span-2">
           <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div>
               <h2 className="text-xl font-semibold">AI Resume Builder</h2>
               <p className="text-gray-400">Create professional resumes tailored to specific job opportunities</p>
             </div>
             <Button className="bg-gradient-to-r from-cyan-400 to-violet-500 text-black hover:from-cyan-500 hover:to-violet-600" onClick={handleCreate}>
-              <Plus className="mr-2 h-4 w-4" />
               Create New Resume
             </Button>
           </div>
-        </motion.div>
+        </div>
 
         {/* CV Preview */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm md:col-span-2">
+        <div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm md:col-span-2">
           <h3 className="mb-4 text-lg font-medium">Your Resumes</h3>
           <div className="space-y-4">
             {isLoading ? (
@@ -159,30 +150,7 @@ export default function CVGeneratorPage() {
               ))
             )}
           </div>
-        </motion.div>
-
-        {/* AI Resume Optimization */}
-        {/* <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm md:col-span-2">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-violet-500">
-              <FileText className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h3 className="text-lg font-medium">AI Resume Optimization</h3>
-              <p className="text-gray-400">Let our AI analyze and improve your resume for specific job positions</p>
-            </div>
-          </div>
-
-          <div className="mt-6 rounded-lg border border-white/10 bg-white/5 p-4">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div>
-                <h4 className="font-medium">Resume Analysis</h4>
-                <p className="text-sm text-gray-400">Upload your existing resume for AI analysis and optimization</p>
-              </div>
-              <Button className="bg-gradient-to-r from-cyan-400 to-violet-500 text-black hover:from-cyan-500 hover:to-violet-600">Upload Resume</Button>
-            </div>
-          </div>
-        </motion.div> */}
+        </div>
       </div>
     </div>
   );

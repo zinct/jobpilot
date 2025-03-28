@@ -63,8 +63,18 @@ function App() {
         <AuthProvider>
           <>
             {page === "/" && <HomePage navigate={navigate} />}
-            {page === "/get-started" && <LoginPage />}
-            {page === "/about" && <h1>About Page</h1>}
+            {page === "/get-started" && <LoginPage navigate={navigate} />}
+            {page === "/register" && <RegisterPage navigate={navigate} />}
+            {page === "/dashboard" && (
+              <DashboardLayout navigate={navigate} location={page}>
+                <DashboardPage navigate={navigate} />
+              </DashboardLayout>
+            )}
+            {page === "/dashboard/cv-generator" && (
+              <DashboardLayout navigate={navigate} location={page}>
+                <CVGeneratorPage navigate={navigate} />
+              </DashboardLayout>
+            )}
           </>
         </AuthProvider>
       </ErrorEventListener>
@@ -98,6 +108,9 @@ function App() {
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
+      <h1 className="text-red-500 pt-10" style={{ fontSize: "4rem", position: "absolute", zIndex: 9999 }}>
+        Im sorry due to file size limitations on ICP Ninja. Please run the frontend locally through my GitHub. Thank you
+      </h1>
       <App />
     </BrowserRouter>
   </StrictMode>
