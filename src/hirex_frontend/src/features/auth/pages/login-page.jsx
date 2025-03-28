@@ -1,16 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, BrainCircuit, Wallet, Fingerprint, Lock, Mail } from "lucide-react";
+import { ArrowLeft, BrainCircuit, Wallet, Fingerprint } from "lucide-react";
 import { Button } from "@/core/components/ui/button";
-import { LoadingOverlay } from "@/core/components/loading-overlay";
 import { useAuth } from "../../../core/providers/auth-provider";
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
 
-export default function LoginPage() {
+export default function LoginPage({ navigate }) {
   const { login, isLoading, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (isAuthenticated) navigate("/dashboard");
@@ -177,15 +174,7 @@ export default function LoginPage() {
                   </div>
 
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <button className="group flex flex-col items-center justify-center rounded-xl border border-white/10 bg-white/5 p-6 transition-colors hover:border-cyan-400/50 hover:bg-cyan-950/20">
-                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500/20 to-cyan-500/10">
-                          <img src="icon/plug-wallet.png" className="rounded" alt="" />
-                        </div>
-                        <h4 className="text-lg font-medium group-hover:text-cyan-400">Plug Wallet</h4>
-                        <p className="mt-2 text-center text-sm text-gray-400">Connect using your Plug wallet for secure authentication</p>
-                      </button>
-
+                    <div className="grid gap-4">
                       <button onClick={login} className="group flex flex-col items-center justify-center rounded-xl border border-white/10 bg-white/5 p-6 transition-colors hover:border-violet-400/50 hover:bg-violet-950/20">
                         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-violet-500/20 to-violet-500/10">
                           <img src="icon/internet-identity.png" className="rounded" alt="" />
