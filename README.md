@@ -71,7 +71,7 @@ npm install
    dfx deploy
   ```
 
-  ⚠️ Note: AI-powered resume analysis will not work on local deployments. To use this feature, deploy to the Playground.
+  ⚠️ Note: AI-powered resume analysis and AI Career Assistant will not work on local deployments. To use this feature, deploy to the Playground.
 
 - Deploy on Playground
   ```sh
