@@ -172,7 +172,7 @@ export default function Register() {
           <div className="container flex h-16 items-center justify-between px-4">
             <a className="flex items-center space-x-2 font-bold" href="/">
               <BrainCircuit className="h-6 w-6 text-cyan-400" />
-              <span className="text-xl">HireX</span>
+              <span className="text-xl">JobPilot</span>
             </a>
 
             <a href="/">

@@ -14,9 +14,8 @@ import LLM "mo:llm";
 
 import Cycles "mo:base/ExperimentalCycles";
 import IC "ic:aaaaa-aa";
-import Blob "mo:base/Blob";
 
-actor HireX {
+actor JobPilot {
   type User = {
     fullName : ?Text;
     dateOfBirth : ?Nat;
@@ -102,6 +101,48 @@ actor HireX {
     updatedAt: Int;
   };
 
+  // Params
+  type jobsRecommendationParams = {
+    search : Text;
+  };
+
+  type ResumeParams = {
+    resumeId : ResumeId;
+  };
+
+  type UpdateResumeParams = {
+    resumeId : ResumeId;
+    personalInfo : ?PersonalInfo;
+    experience : ?[Experience];
+    education : ?[Education];
+    skills : ?[Text];
+    languages : ?[Language];
+    projects : ?[Project];
+    certifications : ?[Certification];
+  };
+
+  type analyzeResumeParams = {
+    resume : Text;
+    responseType : Text;
+  };
+
+  type RegisterParams = {
+    fullName : ?Text;
+    dateOfBirth : ?Nat;
+    yearsOfExperience : ?Text;
+    educationLevel : ?Text;
+    personalityTraits : ?[Text];
+    learningStyle : ?Text;
+    jobRoles : ?[Text];
+    jobSearchStatus : ?Text;
+    jobLevel : ?Text;
+    workMode : ?Text;
+    companySize : ?Text;
+    industriesOfInterest : ?[Text];
+    expectedLocation : ?Text;
+    isRegistered : ?Nat8;
+  };
+
   type Response<T> = Result.Result<T, Text>;
 
   stable var usersStorage : [(Principal, User)] = [];
@@ -114,9 +155,9 @@ actor HireX {
 
   // RESUME
   public shared (msg) func resumes() : async Response<[Resume]> {
-    // if (Principal.isAnonymous(msg.caller)) {
-    //   return #err("Anonymous users are not allowed.");
-    // };
+    if (Principal.isAnonymous(msg.caller)) {
+      return #err("Anonymous users are not allowed.");
+    };
 
     switch (resumesStore.get(msg.caller)) {
       case (?existingResumes) { return #ok(existingResumes) };
@@ -124,13 +165,10 @@ actor HireX {
     };
   };
   
-  type ResumeParams = {
-    resumeId : ResumeId;
-  };
   public shared (msg) func resume(params: ResumeParams) : async Response<Resume> {
-    // if (Principal.isAnonymous(msg.caller)) {
-    //   return #err("Anonymous users are not allowed.");
-    // };
+    if (Principal.isAnonymous(msg.caller)) {
+      return #err("Anonymous users are not allowed.");
+    };
 
     switch (resumesStore.get(msg.caller)) {
       case (?existingResumes) {
@@ -146,9 +184,9 @@ actor HireX {
   };
 
   public shared (msg) func createResume() : async Response<ResumeId> {
-    // if (Principal.isAnonymous(msg.caller)) {
-    //   return #err("Anonymous users are not allowed.");
-    // };
+    if (Principal.isAnonymous(msg.caller)) {
+      return #err("Anonymous users are not allowed.");
+    };
 
     let newResume : Resume = {
       id = nextResumeId;
@@ -177,17 +215,6 @@ actor HireX {
     };
 
     return #ok(index);
-  };
-
-  type UpdateResumeParams = {
-    resumeId : ResumeId;
-    personalInfo : ?PersonalInfo;
-    experience : ?[Experience];
-    education : ?[Education];
-    skills : ?[Text];
-    languages : ?[Language];
-    projects : ?[Project];
-    certifications : ?[Certification];
   };
   public shared (msg) func updateResume(params : UpdateResumeParams) : async Response<Text> {
     switch (resumesStore.get(msg.caller)) {
@@ -228,10 +255,6 @@ actor HireX {
     return #ok(response);
   };
 
-  type analyzeResumeParams = {
-    resume : Text;
-    responseType : Text;
-  };
   public func analyzeResume(params : analyzeResumeParams) : async Response<Text> {
     let defaultPrompt : Text = "You are an expert Resume AI Career Assistant, Your task is to analyze a given resume. Keep the response concise and under 1000 characters. Your response will be consumed by my system and delivered to users.\nEnsure the output is a JSON array with the following structure: [\"point 1\", \"point 2\"].\nEvaluate the following resume.:";
     let response = await LLM.prompt(#Llama3_1_8B, defaultPrompt # " " # params.resume # " " # "Provide the following outputs: - " # params.responseType);
@@ -265,9 +288,9 @@ actor HireX {
 
   // USER
   public shared (msg) func login() : async Response<User> {
-    // if (Principal.isAnonymous(msg.caller)) {
-    //   return #err("Anonymous users are not allowed.");
-    // };
+    if (Principal.isAnonymous(msg.caller)) {
+      return #err("Anonymous users are not allowed.");
+    };
 
     switch (userStore.get(msg.caller)) {
       case (?user) { return #ok(user) };
@@ -294,28 +317,12 @@ actor HireX {
     };
   };
 
-  type RegisterParams = {
-    fullName : ?Text;
-    dateOfBirth : ?Nat;
-    yearsOfExperience : ?Text;
-    educationLevel : ?Text;
-    personalityTraits : ?[Text];
-    learningStyle : ?Text;
-    jobRoles : ?[Text];
-    jobSearchStatus : ?Text;
-    jobLevel : ?Text;
-    workMode : ?Text;
-    companySize : ?Text;
-    industriesOfInterest : ?[Text];
-    expectedLocation : ?Text;
-    isRegistered : ?Nat8;
-  };
   public shared (msg) func register(
     params : RegisterParams
   ) : async Response<Text> {
-    // if (Principal.isAnonymous(msg.caller)) {
-    //   return #err("Anonymous users are not allowed.");
-    // };
+    if (Principal.isAnonymous(msg.caller)) {
+      return #err("Anonymous users are not allowed.");
+    };
 
     let updated_profile : User = {
       fullName = params.fullName;
@@ -339,7 +346,7 @@ actor HireX {
   };
 
   public shared func getAllResumes() : async [Resume] {
-    let allEntries = Iter.toArray(resumesStore.entries()); // Ubah iterator ke array
+    let allEntries = Iter.toArray(resumesStore.entries()); 
     let allResumes = Array.foldLeft<(Principal, [Resume]), [Resume]>(
         allEntries,
         [],
@@ -351,9 +358,9 @@ actor HireX {
   };
 
   public shared query (msg) func getUser() : async Response<User> {
-    // if (Principal.isAnonymous(msg.caller)) {
-    //   return #err("Anonymous users are not allowed.");
-    // };
+    if (Principal.isAnonymous(msg.caller)) {
+      return #err("Anonymous users are not allowed.");
+    };
 
     switch (userStore.get(msg.caller)) {
       case (?user) { return #ok(user) };
@@ -362,9 +369,9 @@ actor HireX {
   };
 
   public shared (msg) func deleteUser() : async Response<Text> {
-    // if (Principal.isAnonymous(msg.caller)) {
-    //   return #err("Anonymous users are not allowed.");
-    // };
+    if (Principal.isAnonymous(msg.caller)) {
+      return #err("Anonymous users are not allowed.");
+    };
 
     if (userStore.remove(msg.caller) != null) {
       return #ok("User deleted successfully.");
@@ -391,27 +398,6 @@ actor HireX {
     };
   };
 
-  // Helper
-  public shared query (msg) func whoami() : async Principal {
-    return msg.caller;
-  };
-
-  public func sayhello() : async Text {
-    return "Hello World";
-  };
-
-  public query func transform({
-    context : Blob;
-    response : IC.http_request_result;
-  }) : async IC.http_request_result {
-    {
-      response with headers = []; // not intersted in the headers
-    };
-  };
-
-  type jobsRecommendationParams = {
-    search : Text;
-  };
   public shared (msg) func jobsRecommendation(params : jobsRecommendationParams) : async Response<Text> {
       switch (userStore.get(msg.caller)) {
           case (null) {
@@ -440,10 +426,7 @@ actor HireX {
                       { name = "Content-Type"; value = "application/json" },
                   ];
                   body = null;
-                  transform = ?{
-                      function = transform;
-                      context = Blob.fromArray([]);
-                  };
+                  transform = null;
               };
 
               Cycles.add<system>(230_949_972_000);

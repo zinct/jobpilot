@@ -1,59 +1,105 @@
-# `hirex`
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/zinct/jobpilot">
+    <img src="assets/image/landing.png" alt="Logo">
+  </a>
+  <h3 align="center">JobPilot - Your Ultimate Blockchain-Powered Career Companion</h3>
+  <p align="center">
+    Our platform leverages AI and blockchain technology to revolutionize how professionals discover opportunities, develop skills, and advance their careers.
+  </p>
+</div>
 
-Welcome to your new `hirex` project and to the Internet Computer development community. By default, creating a new project adds this README and some template files to your project directory. You can edit these template files to customize your project and to include your own code to speed up the development cycle.
+## 📌 Why JobPilot?
 
-To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
+In today's competitive job market, standing out is crucial. JobPilot revolutionizes the way job seekers build, analyze, and optimize their resumes with the power of blockchain and AI. Unlike traditional platforms, JobPilot ensures full on-chain data security, providing transparency and trust like never before. Whether you're a fresh graduate or a seasoned professional, JobPilot helps you craft the perfect resume and find the right job—seamlessly.
 
-To learn more before you start working with `hirex`, see the following documentation available online:
+## 🌟 Features of JobPilot?
 
-- [Quick Start](https://internetcomputer.org/docs/current/developer-docs/setup/deploy-locally)
-- [SDK Developer Tools](https://internetcomputer.org/docs/current/developer-docs/setup/install)
-- [Motoko Programming Language Guide](https://internetcomputer.org/docs/current/motoko/main/motoko)
-- [Motoko Language Quick Reference](https://internetcomputer.org/docs/current/motoko/main/language-manual)
+### AI-Powered Resume Builder (Fully On-Chain)
 
-If you want to start working on your project right away, you might want to try the following commands:
+- Choose from multiple professionally designed templates.
+- Easily customize your resume to fit your needs.
+- All resumes are securely stored on-chain for authenticity and integrity.
 
-```bash
-cd hirex/
-dfx help
-dfx canister --help
+### AI Resume Analysis (Fully On-Chain)
+
+- Get in-depth insights into your resume using AI.
+- Identify strengths and areas for improvement.
+- Ensure your resume aligns with job market trends—all fully on-chain.
+
+### Personalized Job Recommendations (HTTP Outcalls)
+
+- Receive job recommendations based on your personal data at registration.
+- Jobs are matched in real-time using blockchain technology for trust and accuracy.
+- JobPilot provides a match score (0 - 100%) based on personality data analyzed by AI.
+
+### AI Career Assistant (Fully On-Chain)
+
+- Get personalized career advice powered by AI.
+- AI helps optimize your resume and job search strategy.
+- Fully on-chain, ensuring transparency and data integrity.
+
+## 🏆 What We Are Proud Of
+
+- We have successfully deployed AI-driven resume analysis on the Internet Computer Protocol (ICP)
+- With HTTP Outcalls, JobPilot can securely interact with external data sources
+- We have integrated Internet Identity (II) for secure and user-friendly authentication.
+
+## Getting Started
+
+### 🔧 Clone the repository:
+
+```sh
+git clone https://github.com/zinct/jobpilot.git
 ```
 
-## Running the project locally
+### 📦 Install Dependencies:
 
-If you want to test your project locally, you can use the following commands:
-
-```bash
-# Starts the replica, running in the background
-dfx start --background
-
-# Deploys your canisters to the replica and generates your candid interface
-dfx deploy
+```sh
+cd jobpilot
+npm install
 ```
 
-Once the job completes, your application will be available at `http://localhost:4943?canisterId={asset_canister_id}`.
+### 🛠 Deployment Options:
 
-If you have made changes to your backend canister, you can generate a new candid interface with
+- Deploy on Local
 
-```bash
-npm run generate
-```
+  ```sh
+   dfx start --clean
+   dfx deploy
+  ```
 
-at any time. This is recommended before starting the frontend development server, and will be run automatically any time you run `dfx deploy`.
+  ⚠️ Note: AI-powered resume analysis will not work on local deployments. To use this feature, deploy to the Playground.
 
-If you are making frontend changes, you can start a development server with
+- Deploy on Playground
+  ```sh
+   dfx deploy --playground
+  ```
+  ⚠️ Note: Job recommendations using HTTP Outcalls require a local deployment due to cycle limitations on the Playground.
 
-```bash
-npm start
-```
+## Demo App
 
-Which will start a server at `http://localhost:8080`, proxying API requests to the replica at port 4943.
+| Jobpilot Landing Page                | Login to jobpilot                  |
+| ------------------------------------ | ---------------------------------- |
+| ![Image 1](assets/image/landing.png) | ![Image 2](assets/image/login.png) |
 
-### Note on frontend environment variables
+| Register to jobpilot                  | Resume Builder                       |
+| ------------------------------------- | ------------------------------------ |
+| ![Image 1](assets/image/register.png) | ![Image 2](assets/image/builder.png) |
 
-If you are hosting frontend code somewhere without using DFX, you may need to make one of the following adjustments to ensure your project does not fetch the root key in production:
+| AI Resume Analysis                    | AI Jobs Recommendation            |
+| ------------------------------------- | --------------------------------- |
+| ![Image 1](assets/image/analysis.png) | ![Image 2](assets/image/jobs.png) |
 
-- set`DFX_NETWORK` to `ic` if you are using Webpack
-- use your own preferred method to replace `process.env.DFX_NETWORK` in the autogenerated declarations
-  - Setting `canisters -> {asset_canister_id} -> declarations -> env_override to a string` in `dfx.json` will replace `process.env.DFX_NETWORK` with the string in the autogenerated declarations
-- Write your own `createActor` constructor
+| AI Career Assistant                    |
+| -------------------------------------- |
+| ![Image 1](assets/image/assistant.png) |
+
+## Created by Motionlab Team
+
+- Indra Mahesa (Developer)
+- Audri Mona Najogi (UI/UX Designer)
+- Wildan Syukri Niam (Developer)
+- Reinhard Efraim Situmeang (Developer)
+- Aaron Joseph (Developer)
