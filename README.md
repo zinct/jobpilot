@@ -5,7 +5,7 @@
   <a href="https://github.com/zinct/jobpilot">
     <img src="assets/landing.png" alt="Logo">
   </a>
-  <h3 align="center">JobPilot - Your Ultimate Blockchain-Powered Career Companion</h3>
+  <h3 align="center">JobPilot - Decentralize AI-Powered Career Advancement</h3>
   <p align="center">
     Our platform leverages AI and blockchain technology to revolutionize how professionals discover opportunities, develop skills, and advance their careers.
   </p>
