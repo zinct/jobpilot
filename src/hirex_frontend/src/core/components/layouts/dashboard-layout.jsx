@@ -105,21 +105,6 @@ export default function DashboardLayout() {
               <span>{item.name}</span>
             </a>
           ))}
-
-          <div className="my-6 border-t border-white/10 pt-6">
-            <div className="mb-6 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Account</div>
-
-            <a
-              href="#"
-              onClick={() => {
-                navigate("/dashboard/profile");
-              }}
-              className="group mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-lg font-medium text-gray-400 transition-all hover:bg-white/5 hover:text-white"
-            >
-              <User className="h-6 w-6 text-gray-400 group-hover:text-white" />
-              <span>Profile</span>
-            </a>
-          </div>
         </nav>
         {/* User Profile */}
         <div className="border-t border-white/10 p-4">
@@ -135,7 +120,7 @@ export default function DashboardLayout() {
             <div className="flex-1 overflow-hidden">
               {isLoading ? <div className="h-5 w-24 animate-pulse rounded bg-gray-700" /> : <h4 className="truncate font-medium">{user?.fullName ?? ""}</h4>}
 
-              {isLoading ? <div className="mt-1 h-4 w-32 animate-pulse rounded bg-gray-700" /> : <p className="truncate text-sm text-gray-400">{user?.jobRoles[0] ?? ""}</p>}
+              {isLoading && !user ? <div className="mt-1 h-4 w-32 animate-pulse rounded bg-gray-700" /> : <p className="truncate text-sm text-gray-400">{user?.jobRoles?.[0] ?? ""}</p>}
             </div>
 
             {isLoading ? (

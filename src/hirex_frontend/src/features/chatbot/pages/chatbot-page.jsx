@@ -82,13 +82,23 @@ export default function CareerChatbot() {
                       <BrainCircuit className="h-4 w-4 text-white" />
                     </div>
                     <div className="rounded-2xl rounded-tl-none bg-gray-800/50 p-4">
-                      <p className="text-gray-100 whitespace-pre-line">{message.content}</p>
+                      <p
+                        className="text-gray-100 whitespace-pre-line"
+                        dangerouslySetInnerHTML={{
+                          __html: message.content.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>"),
+                        }}
+                      />
                     </div>
                   </div>
                 ) : (
                   <div key={index} className="flex items-start justify-end gap-3">
                     <div className="rounded-2xl rounded-tr-none bg-cyan-950/30 p-4">
-                      <p className="text-gray-100">{message.content}</p>
+                      <p
+                        className="text-gray-100"
+                        dangerouslySetInnerHTML={{
+                          __html: message.content.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>"),
+                        }}
+                      />
                     </div>
                     <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-cyan-400/20">
                       <User className="h-4 w-4 text-cyan-400" />

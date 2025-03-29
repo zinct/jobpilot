@@ -425,11 +425,11 @@ actor HireX {
               let yearsOfExperience = Option.get(user.yearsOfExperience, "");
 
               let url = "https://jobpilot.jabarkoperasi.com/jobs-recommendation?job_roles=" # params.search # 
-                        "&location=" # location # 
-                        "&job_level=" # jobLevel # 
-                        "&work_mode=" # workMode # 
-                        "&education_level=" # educationLevel # 
-                        "&years_of_experience=" # yearsOfExperience;
+                        "&location=" # Text.replace(location, #char ' ', "%20") # 
+                        "&job_level=" # Text.replace(jobLevel, #char ' ', "%20") # 
+                        "&work_mode=" # Text.replace(workMode, #char ' ', "%20") # 
+                        "&education_level=" # Text.replace(educationLevel, #char ' ', "%20") # 
+                        "&years_of_experience=" # Text.replace(yearsOfExperience, #char ' ', "%20");
 
               let http_request : IC.http_request_args = {
                   url = url;

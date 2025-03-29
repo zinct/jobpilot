@@ -54,6 +54,8 @@ export default function Register() {
       if ("ok" in response) {
         const user = mapOptionalToFormattedJSON(response.ok);
 
+        if (user.isRegistered === 1) window.location.href = "/dashboard";
+
         setFormData({
           ...formData,
           name: user.fullName ?? "",
@@ -117,7 +119,7 @@ export default function Register() {
     setIsLoading(false);
 
     if ("ok" in response) {
-      isFinalStep ? navigate(`/dashboard`) : setCurrentStep((prev) => prev + 1);
+      isFinalStep ? (window.location.href = "/dashboard") : setCurrentStep((prev) => prev + 1);
     } else {
       console.log("err", response.err);
     }

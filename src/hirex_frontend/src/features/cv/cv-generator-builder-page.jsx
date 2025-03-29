@@ -562,19 +562,6 @@ export default function CVGeneratorBuilderPage() {
                       <label className="block text-sm font-medium text-gray-300">Professional Summary</label>
                       <div className="relative">
                         <textarea value={formData.personalInfo.summary} onChange={(e) => handleChange("personalInfo", "summary", e.target.value)} rows={4} className={`w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400 ${improvingField.section === "personalInfo" && improvingField.field === "summary" ? "opacity-50" : ""}`} placeholder="A brief summary of your professional background and career goals..." disabled={improvingField.section === "personalInfo" && improvingField.field === "summary"}></textarea>
-                        {improvingField.section === "personalInfo" && improvingField.field === "summary" ? (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="flex items-center space-x-2 bg-black/50 px-3 py-1 rounded-full">
-                              <div className="animate-spin h-4 w-4 border-2 border-cyan-400 border-t-transparent rounded-full"></div>
-                              <span className="text-sm text-cyan-400">Improving with AI...</span>
-                            </div>
-                          </div>
-                        ) : (
-                          <button type="button" onClick={() => handleAIImprove("personalInfo", "summary", null, formData.personalInfo.summary)} className="absolute right-3 bottom-3 flex items-center space-x-1 bg-gradient-to-r from-cyan-500 to-violet-500 text-white px-2 py-1 rounded-md text-xs hover:from-cyan-600 hover:to-violet-600 transition-colors">
-                            <Sparkles className="h-3 w-3" />
-                            <span>AI Improve</span>
-                          </button>
-                        )}
                       </div>
                       <p className="text-xs text-gray-400">Tip: Keep your summary concise (3-5 sentences) and highlight your key strengths and experience.</p>
                     </div>
@@ -738,30 +725,6 @@ export default function CVGeneratorBuilderPage() {
                               placeholder="Describe your responsibilities, achievements, and the technologies you used..."
                               disabled={improvingField.section === "experience" && improvingField.id === exp.id && improvingField.field === "description"}
                             ></textarea>
-                            {improvingField.section === "experience" && improvingField.id === exp.id && improvingField.field === "description" ? (
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="flex items-center space-x-2 bg-black/50 px-3 py-1 rounded-full">
-                                  <div className="animate-spin h-4 w-4 border-2 border-cyan-400 border-t-transparent rounded-full"></div>
-                                  <span className="text-sm text-cyan-400">Improving with AI...</span>
-                                </div>
-                              </div>
-                            ) : (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  // If this is a temporary item, add it to the real array first
-                                  if (exp.id.includes("-temp")) {
-                                    addItem("experience");
-                                    return;
-                                  }
-                                  handleAIImprove("experience", "description", exp.id, exp.description);
-                                }}
-                                className="absolute right-3 bottom-3 flex items-center space-x-1 bg-gradient-to-r from-cyan-500 to-violet-500 text-white px-2 py-1 rounded-md text-xs hover:from-cyan-600 hover:to-violet-600 transition-colors"
-                              >
-                                <Sparkles className="h-3 w-3" />
-                                <span>AI Improve</span>
-                              </button>
-                            )}
                           </div>
 
                           {/* New Achievements Section */}
@@ -968,30 +931,6 @@ export default function CVGeneratorBuilderPage() {
                               placeholder="Relevant coursework, achievements, or activities..."
                               disabled={improvingField.section === "education" && improvingField.id === edu.id && improvingField.field === "description"}
                             ></textarea>
-                            {improvingField.section === "education" && improvingField.id === edu.id && improvingField.field === "description" ? (
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="flex items-center space-x-2 bg-black/50 px-3 py-1 rounded-full">
-                                  <div className="animate-spin h-4 w-4 border-2 border-cyan-400 border-t-transparent rounded-full"></div>
-                                  <span className="text-sm text-cyan-400">Improving with AI...</span>
-                                </div>
-                              </div>
-                            ) : (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  // If this is a temporary item, add it to the real array first
-                                  if (edu.id.includes("-temp")) {
-                                    addItem("education");
-                                    return;
-                                  }
-                                  handleAIImprove("education", "description", edu.id, edu.description);
-                                }}
-                                className="absolute right-3 bottom-3 flex items-center space-x-1 bg-gradient-to-r from-cyan-500 to-violet-500 text-white px-2 py-1 rounded-md text-xs hover:from-cyan-600 hover:to-violet-600 transition-colors"
-                              >
-                                <Sparkles className="h-3 w-3" />
-                                <span>AI Improve</span>
-                              </button>
-                            )}
                           </div>
                         </div>
                       </div>
@@ -1237,19 +1176,6 @@ export default function CVGeneratorBuilderPage() {
                               placeholder="Describe the project, your role, and the impact it had..."
                               disabled={improvingField.section === "projects" && improvingField.id === project.id && improvingField.field === "description"}
                             ></textarea>
-                            {improvingField.section === "projects" && improvingField.id === project.id && improvingField.field === "description" ? (
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="flex items-center space-x-2 bg-black/50 px-3 py-1 rounded-full">
-                                  <div className="animate-spin h-4 w-4 border-2 border-cyan-400 border-t-transparent rounded-full"></div>
-                                  <span className="text-sm text-cyan-400">Improving with AI...</span>
-                                </div>
-                              </div>
-                            ) : (
-                              <button type="button" onClick={() => handleAIImprove("projects", "description", project.id, project.description)} className="absolute right-3 bottom-3 flex items-center space-x-1 bg-gradient-to-r from-cyan-500 to-violet-500 text-white px-2 py-1 rounded-md text-xs hover:from-cyan-600 hover:to-violet-600 transition-colors">
-                                <Sparkles className="h-3 w-3" />
-                                <span>AI Improve</span>
-                              </button>
-                            )}
                           </div>
                         </div>
 

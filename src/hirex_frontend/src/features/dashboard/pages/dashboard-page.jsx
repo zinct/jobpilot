@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { FileText, Briefcase, BookOpen, ArrowRight, ChevronRight, Plus, Calendar, Sparkles, BrainCircuit, CheckCircle2 } from "lucide-react";
 import { Button } from "@/core/components/ui/button";
-import { useErrorAlert } from "../../../core/components/error-alert";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 

@@ -28,7 +28,12 @@ export default function LoginPage() {
               <span className="text-xl">JobPilot</span>
             </a>
 
-            <a href="/">
+            <a
+              href="#"
+              onClick={() => {
+                navigate("/");
+              }}
+            >
               <Button variant="ghost" className="text-gray-400 hover:bg-white/5 hover:text-white">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Home
@@ -177,15 +182,7 @@ export default function LoginPage() {
                   </div>
 
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <button className="group flex flex-col items-center justify-center rounded-xl border border-white/10 bg-white/5 p-6 transition-colors hover:border-cyan-400/50 hover:bg-cyan-950/20">
-                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500/20 to-cyan-500/10">
-                          <img src="icon/plug-wallet.png" className="rounded" alt="" />
-                        </div>
-                        <h4 className="text-lg font-medium group-hover:text-cyan-400">Plug Wallet</h4>
-                        <p className="mt-2 text-center text-sm text-gray-400">Connect using your Plug wallet for secure authentication</p>
-                      </button>
-
+                    <div className="grid gap-4">
                       <button onClick={login} className="group flex flex-col items-center justify-center rounded-xl border border-white/10 bg-white/5 p-6 transition-colors hover:border-violet-400/50 hover:bg-violet-950/20">
                         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-violet-500/20 to-violet-500/10">
                           <img src="icon/internet-identity.png" className="rounded" alt="" />

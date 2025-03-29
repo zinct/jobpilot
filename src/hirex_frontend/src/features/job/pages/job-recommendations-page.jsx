@@ -85,9 +85,9 @@ export default function JobRecommendationsPage() {
       let formattedSearch;
 
       if (search === "") {
-        formattedSearch = user.jobRoles.map((word) => word.toLowerCase().replace(/\s+/g, "-")).join(",");
+        formattedSearch = user.jobRoles.map((word) => word.toLowerCase().replace(/\s+/g, "%20")).join(",");
       } else {
-        formattedSearch = search.toLowerCase().replace(/\s+/g, "-");
+        formattedSearch = search.toLowerCase().replace(/\s+/g, "%20");
       }
 
       const response = await hirex_backend.jobsRecommendation({ search: formattedSearch });

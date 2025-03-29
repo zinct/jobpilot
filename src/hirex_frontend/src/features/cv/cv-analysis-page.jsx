@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Upload, FileText, Check, AlertCircle, X, Download, BarChart, AlertTriangle, CheckCircle, Sparkles, RefreshCw, Loader2 } from "lucide-react";
+import { Upload, FileText, Check, AlertCircle, X, Download, BarChart, AlertTriangle, CheckCircle, Sparkles, RefreshCw, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/core/components/ui/button";
 import * as pdfjsLib from "pdfjs-dist";
 import { GlobalWorkerOptions } from "pdfjs-dist";
@@ -177,26 +177,6 @@ export default function ResumeAnalysisPage() {
   return (
     <div className="min-h-screen w-full bg-black text-white">
       <LoadingOverlay isLoading={isAuthLoading} message={"Your page is being initializing..."} />
-      {/* Header */}
-      <header className="sticky top-0 z-30 ">
-        <div className="flex items-center justify-between">
-          {file && jsonOutput && !isAnalyzed && (
-            <Button onClick={handleAnalyzeResume} className="bg-gradient-to-r from-cyan-400 to-violet-500 text-black hover:from-cyan-500 hover:to-violet-600" disabled={isAnalyzing}>
-              {isAnalyzing ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Analyzing...
-                </>
-              ) : (
-                <>
-                  <BarChart className="mr-2 h-4 w-4" />
-                  Analyze Resume
-                </>
-              )}
-            </Button>
-          )}
-        </div>
-      </header>
 
       <div className="p-6">
         <div className="grid gap-6 md:grid-cols-2">
@@ -256,6 +236,10 @@ export default function ResumeAnalysisPage() {
                 </div>
               </div>
             )}
+
+            <Button className="w-full mt-5 bg-gradient-to-r from-cyan-400 to-violet-500 text-black hover:from-cyan-500 hover:to-violet-600" onClick={handleAnalyzeResume} disabled={!(file && jsonOutput && !isAnalyzed) || isAnalyzing}>
+              {isAnalyzing ? "Analyzing..." : "Analyze Resume"}
+            </Button>
 
             {/* Instructions */}
             <div className="mt-6 bg-white/5 border border-white/10 rounded-lg p-4">

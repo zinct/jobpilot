@@ -94,7 +94,7 @@ export default function CVGeneratorPage() {
           })
         );
       } else {
-        throw Error(response.err);
+        console.log("Err", response.err);
       }
     } catch (err) {
       showError(err);

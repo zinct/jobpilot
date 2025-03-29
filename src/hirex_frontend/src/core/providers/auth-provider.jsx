@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { AuthClient } from "@dfinity/auth-client";
 import { Actor } from "@dfinity/agent";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { getInternetIdentityNetwork } from "@/core/utils/canisterUtils";
 import { hirex_backend } from "declarations/hirex_backend";
 import { mapOptionalToFormattedJSON } from "../utils/canisterUtils";
@@ -11,6 +11,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [authClient, setAuthClient] = useState(null);
   const [user, setUser] = useState(null);
   const [identity, setIdentity] = useState(null);
@@ -52,7 +53,9 @@ export const AuthProvider = ({ children }) => {
         }
       } else {
         setIsLoading(false);
-        // navigate("/get-started"); // cek dulu
+        if (location.pathname !== "/") {
+          navigate("/get-started");
+        }
       }
     } catch (err) {
       showError(err);

@@ -336,13 +336,17 @@ export function CVGeneratorHeader({ setActiveTab, activeTab, cvPreviewRef, resum
         html2pdf()
           .from(element)
           .set(opt)
-          .outputPdf("blob") // Output sebagai blob
+          .outputPdf("blob")
           .then((blob) => {
-            // Buat URL untuk blob dan buka di tab baru
             const pdfUrl = URL.createObjectURL(blob);
-            window.open(pdfUrl, "_blank");
 
-            // Bersihkan elemen sementara
+            const a = document.createElement("a");
+            a.href = pdfUrl;
+            a.download = "Your resume.pdf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
             document.body.removeChild(tempContainer);
             setIsDownloading(false);
           })
