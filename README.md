@@ -1,4 +1,5 @@
-<!-- PROJECT LOGO -->
+# 🚀 JobPilot
+
 <br />
 <div align="center">
   <a href="https://github.com/zinct/jobpilot">
