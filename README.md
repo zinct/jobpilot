@@ -2,7 +2,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/zinct/jobpilot">
-    <img src="assets/image/landing.png" alt="Logo">
+    <img src="assets/landing.png" alt="Logo">
   </a>
   <h3 align="center">JobPilot - Your Ultimate Blockchain-Powered Career Companion</h3>
   <p align="center">
@@ -80,21 +80,21 @@ npm install
 
 ## Demo App
 
-| Jobpilot Landing Page                | Login to jobpilot                  |
-| ------------------------------------ | ---------------------------------- |
-| ![Image 1](assets/image/landing.png) | ![Image 2](assets/image/login.png) |
+| Jobpilot Landing Page          | Login to jobpilot            |
+| ------------------------------ | ---------------------------- |
+| ![Image 1](assets/landing.png) | ![Image 2](assets/login.png) |
 
-| Register to jobpilot                  | Resume Builder                       |
-| ------------------------------------- | ------------------------------------ |
-| ![Image 1](assets/image/register.png) | ![Image 2](assets/image/builder.png) |
+| Register to jobpilot            | Resume Builder                 |
+| ------------------------------- | ------------------------------ |
+| ![Image 1](assets/register.png) | ![Image 2](assets/builder.png) |
 
-| AI Resume Analysis                    | AI Jobs Recommendation            |
-| ------------------------------------- | --------------------------------- |
-| ![Image 1](assets/image/analysis.png) | ![Image 2](assets/image/jobs.png) |
+| AI Resume Analysis              | AI Jobs Recommendation      |
+| ------------------------------- | --------------------------- |
+| ![Image 1](assets/analysis.png) | ![Image 2](assets/jobs.png) |
 
-| AI Career Assistant                    |
-| -------------------------------------- |
-| ![Image 1](assets/image/assistant.png) |
+| AI Career Assistant              |
+| -------------------------------- |
+| ![Image 1](assets/assistant.png) |
 
 ## Created by Motionlab Team
 
